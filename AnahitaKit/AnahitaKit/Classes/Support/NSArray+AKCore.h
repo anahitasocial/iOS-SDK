@@ -6,8 +6,13 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+/**
+ @category NSArray (AKCore)
 
+ @abstract
+*/
 @interface NSArray (AKCore)
+
+- (NSArray*)arrayByMappingObjectsUsingBlock:(id(^)(id obj, NSUInteger idx))block;
 
 @end

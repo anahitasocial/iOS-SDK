@@ -6,8 +6,24 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "RKObjectMapping.h"
 
-@interface AKObjectMappings : NSObject
+/**
+ @class AKObjectMappings
+ 
+ @abstract 
+ Encapuslate both serializer and deserializer for an object
+ 
+ */
+@interface AKObjectMapping : RKObjectMapping
+
+/**
+ @method
+
+ @abstract
+ maps a relationship to another object
+*/
+- (void)mapRelationship:(NSString*)relationship toObjectClass:(Class)class;
 
 @end
+

@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <SenTestingKit/SenTestingKit.h>
 
-@interface AKTestConnect : NSObject
+@interface AKTestConnect : SenTestCase
 
 @end

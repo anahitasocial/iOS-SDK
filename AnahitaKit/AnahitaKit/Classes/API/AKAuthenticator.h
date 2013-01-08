@@ -6,8 +6,6 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 @class RKObjectManager;
 
 /**
@@ -65,35 +63,43 @@ typedef enum AKAuthenticationError {
 
 @end
 
-@class AKAuthentication;
+@class AKAuthenticator;
 
 /**
  AKAuthenticationDelegate delegate communicates the authentication result with a delegate object
  */
-@protocol AKAuthenticationDelegate <NSObject>
+@protocol AKAuthenticatorDelegate <NSObject>
+
+@required
 
 /**
  This delegate method is called if an authentication is succesfull.
  
- @param authentication The authentication object
+ @param The authenticator object
+ @param The credential authenticated
  */
-- (void)authenticationCredentialDidPass:(AKAuthenticationCredential*)credential;
+- (void)authenticator:(AKAuthenticator*)authenticator didAuthenticateCredential:(AKAuthenticationCredential*)credential;
+
+@optional
 
 /**
  This delegate method is called if an authentication has failed.
  
- @param authentication The authentication object
- @param error The authentication error code
+ @param The authenticator object
+ @param The credential authenticated
+ @param error The authentication error
  */
-- (void)authenticationCredential:(AKAuthenticationCredential*)credential DidFailWithError:(AKAuthenticationError)error;
+- (void)authenticator:(AKAuthenticator*)authenticator didFailAuthenticatingCredential:(AKAuthenticationCredential*)authenticationCredential
+        withError:(AKAuthenticationError)error;
 
 @end
+
 
 /**
   AKAuthentication authenticate a credential and if a delegate is set it will return the result of 
   the authentication
  */
-@interface AKAuthentication : NSObject
+@interface AKAuthenticator : NSObject
 
 ///-----------------------------------------------------------------------------
 /// @name Creating an authentication
@@ -113,7 +119,7 @@ typedef enum AKAuthenticationError {
 /**
  The authentication credential
  */
-@property (nonatomic,strong) id<AKAuthenticationDelegate> delegate;
+@property (nonatomic,weak) id<AKAuthenticatorDelegate> delegate;
 
 ///-----------------------------------------------------------------------------
 /// @name Authenticating

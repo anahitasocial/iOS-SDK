@@ -8,6 +8,9 @@
 
 #import "TestSetup.h"
 
-@implementation TestSetup
-
-@end
+__attribute__((constructor))
+static void initialize() {
+    AKMixinAllClassesBehaviors();
+//    AKGlobalConfiguration.sharedInstance.siteURL = [NSURL URLWithString:@"http://localhost/anahita/branches/search/site"];
+    //TestObjectManager;
+}

@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@interface AKActorListViewController : AKEntityListViewController
 
-@interface AKActorListViewController : NSObject
+
 
 @end

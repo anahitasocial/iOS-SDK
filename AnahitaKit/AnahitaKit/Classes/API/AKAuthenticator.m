@@ -6,14 +6,13 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import "AKAuthentication.h"
 #import "RestKit.h"
 
 /**
  Notifications
  */
 NSString *const AKAuthenticationDidSucceedNotification = @"AKAuthenticationDidSucceedNotification";
-NSString *const AKAuthenticationDidFailNotification = @"AKAuthenticationDidSucceedNotification";
+NSString *const AKAuthenticationDidFailNotification = @"AKAuthenticationDidFailNotification";
 
 /**
  AKAuthenticationCredential
@@ -40,14 +39,14 @@ NSString *const AKAuthenticationDidFailNotification = @"AKAuthenticationDidSucce
 /**
   Authentication is a loader delegate
  */
-@interface AKAuthentication(Private) <RKObjectLoaderDelegate>
+@interface AKAuthenticator(Private) <RKObjectLoaderDelegate>
 
 @end
 
 /**
  AKAuthentication
  */
-@implementation AKAuthentication
+@implementation AKAuthenticator
 
 - (id)initWithObjectManager:(RKObjectManager*)objectManager;
 {
@@ -79,6 +78,8 @@ NSString *const AKAuthenticationDidFailNotification = @"AKAuthenticationDidSucce
     } else {
         [[NSNotificationCenter defaultCenter] postNotificationName:AKAuthenticationDidFailNotification object:self];
     }
+    //remove the this object as the delegate
+    request.delegate = NULL;
     
     if ( self.delegate )
     {
@@ -86,9 +87,12 @@ NSString *const AKAuthenticationDidFailNotification = @"AKAuthenticationDidSucce
         
         if ( response.isOK )
         {
-            [self.delegate authenticationCredentialDidPass:credential];
-        } else {
-            [self.delegate authenticationCredential:credential DidFailWithError:response.statusCode];
+            [self.delegate authenticator:self didAuthenticateCredential:credential];
+        }
+        else
+        {
+            if ( [self.delegate respondsToSelector:@selector(authenticator:didFailAuthenticatingCredential:withError:)])
+                [self.delegate authenticator:self didFailAuthenticatingCredential:credential withError:response.statusCode];
         }
     }
 }

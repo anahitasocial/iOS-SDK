@@ -6,9 +6,8 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#ifndef AnahitaKit_Connect_h
-#define AnahitaKit_Connect_h
 
+#import "AKOAuthConsumer.h"
+#import "AKOAuthToken.h"
+#import "AKTwitterReverseOAuth.h"
 
-
-#endif

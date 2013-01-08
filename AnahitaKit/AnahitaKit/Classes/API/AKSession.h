@@ -10,17 +10,30 @@
 @protocol AKAuthenticationDelegate;
 @class AKAuthenticationCredential;
 @class RKObjectManager;
-@class AKAuthentication;
-@class AKPerson;
-
+@class AKAuthenticator;
+@class AKPersonObject;
+@class AKSession;
 /*
  Posted when a session is ready to be used
  */
-extern NSString *const AKSessionReadyNotification;
+extern NSString *const AKSessionIsAuthenticatedNotification;
 /**
  Posted when a session encounters a problem during start 
  */
-extern NSString *const AKSessionErrorNotification;
+extern NSString *const AKSessionRequiresAuthenticationNotification;
+
+/**
+ Delegate methods that are called back for a session lifecycle
+ */
+@protocol AKSessionDelegate <NSObject>
+
+//called if we need to authenticate the user
+- (void)sessionRequiresAuthentication:(AKSession*)session;
+
+//called if the user is already authenticated
+- (void)session:(AKSession*)session isAuthenticatedWithPerson:(AKPersonObject*)person;
+
+@end
 
 /**
   Session object provides an authenticated session with an anahita server
@@ -32,27 +45,43 @@ extern NSString *const AKSessionErrorNotification;
 ///-----------------------------------------------------------------------------
 
 /**
- Creates a new session for a site base URL
+ Return the shared session instance
  
- @param URL An anahita site url
- @return A non-authenticated session
+ @return The share session instance or null if not instantiated
+ 
+ @discussion
+    This method should be called after a session has been instantiated 
  */
-+ (id)sessionWithBaseURL:(NSURL*)URL;
++ (AKSession*)sharedSession;
+
+///**
+// Creates a new session and new object object manager
+// 
+// @param URL An anahita site url
+// @return A non-authenticated session
+// */
+//+ (AKSession*)sessionWithBaseURL:(NSURL*)URL;
+
+/**
+ Creates a session with an object manager
+ 
+ @param Object manager
+ */
+- (id)initWithObjectManager:(RKObjectManager*)objectManager;
 
 ///-----------------------------------------------------------------------------
 /// @name Session Authentication
 ///-----------------------------------------------------------------------------
 
 /**
- Boolean value that determines if the session has been authenticated or not
+ Boolean value that determines if the session has been previously authenticated or not
  */
 @property (nonatomic,readonly) BOOL authenticated;
 
 /**
- Session authentication object. Use this object to authentication a {@link AKAuthenticationCredential}
+ callback backs for the session lifecycle
  */
-@property (nonatomic,readonly) AKAuthentication* authentication;
-
+@property (nonatomic,weak) id<AKSessionDelegate> delegate;
 
 ///-----------------------------------------------------------------------------
 /// @name Object Loader
@@ -68,14 +97,11 @@ extern NSString *const AKSessionErrorNotification;
 ///-----------------------------------------------------------------------------
 
 /**
- Starts a new session 
-
- @discussion
- When a session starts it communicates with the server to get the server information. Current logged in
- user (viewer). Once the session is ready to be used, {@link AKSessionReadyNotification} is posted. if there's an error
- then {@link AKSessionErrorNotification} is dispatched
+ Checks if the session is authenticated. Post AKSessionIsAuthenticatedNotification is authenticated 
+ otherwise posts AKSessionRequiresAuthenticationNotification
+ 
  */
-- (void)start;
+- (void)checkSessionIsAuthenticated;
 
 ///-----------------------------------------------------------------------------
 /// @name Getting current logged in user (Viewer)
@@ -84,7 +110,7 @@ extern NSString *const AKSessionErrorNotification;
 /**
  Return the current viewer object (logged in user)
  */
-@property (nonatomic,readonly) AKPerson *viewer;
+@property (nonatomic,strong) AKPersonObject *viewer;
 
 @end
 

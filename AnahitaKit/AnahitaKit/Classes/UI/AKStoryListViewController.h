@@ -6,8 +6,16 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import "AKEntityListViewController.h"
 
+/**
+ @class AKStoryListViewController
+ 
+ @abstract
+ Displays a list of stories.
+*/
 @interface AKStoryListViewController : AKEntityListViewController
+
+/** @abstract Set a query to show a list of stories */
+@property(nonatomic,strong) AKStoryQueryObject *storyQuery;
 
 @end

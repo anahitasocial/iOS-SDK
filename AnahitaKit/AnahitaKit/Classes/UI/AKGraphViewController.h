@@ -8,6 +8,20 @@
 
 #import "AKActorListViewController.h"
 
+enum kAKGraphSegmentedControlIndex {
+  kAKGraphFollowersSegmentedControlIndex = 0,
+  kAKGraphLeadersSegmentedControlIndex = 1
+};
+
 @interface AKGraphViewController : AKActorListViewController
+{
+    UISegmentedControl *_segmentControl;
+}
+
+/** @abstract actor whose graph we want to show */
+@property(nonatomic,strong) AKActorObject *actor;
+
+/** @abstract actor whose graph we want to show */
+@property(nonatomic,readonly) UISegmentedControl* segmentControl;
 
 @end

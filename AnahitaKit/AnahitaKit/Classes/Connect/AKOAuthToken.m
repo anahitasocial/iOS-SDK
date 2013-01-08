@@ -6,8 +6,15 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import "AKOAuthToken.h"
+@implementation AKOAuthToken : NSObject
 
-@implementation AKOAuthToken
+- (id)initWithKey:(NSString*)aKey secret:(NSString*)aSecret;
+{
+    if ( self = [super init] ) {
+        _key     = aKey;
+        _secret  = aSecret;
+    }
+    return self;
+}
 
 @end

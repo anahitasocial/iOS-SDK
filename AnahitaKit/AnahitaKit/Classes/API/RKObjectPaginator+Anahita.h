@@ -8,6 +8,13 @@
 
 #import "RKObjectPaginator.h"
 
-@interface RKObjectPaginator (Anahita)
+
+@interface RKObjectPaginator()
+
+/** @abstract object mapping to use for pagination */
+@property(nonatomic,strong) RKObjectMapping *objectMapping;
+
+/** @abstract check if a paginator is in the middle of a load */
+@property(nonatomic,readonly, getter = isLoading) BOOL loading;
 
 @end

@@ -6,4 +6,8 @@
     #import <Foundation/Foundation.h>
     #import <UIKit/UIKit.h>
     #import "AnahitaKit.h"
+    #import "OCMock/OCMock.h"
+    #define TestObjectManager \
+        [AKObjectManager objectManagerWithBaseURLString:@"http://localhost/anahita/branches/search/site/index.php/"]
+
 #endif

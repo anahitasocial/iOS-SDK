@@ -7,15 +7,149 @@
 //
 
 #import "AKAPPAppDelegate.h"
+#import "RKObjectManager.h"
+#import "AnahitaKit.h"
+#import "Hive.h"
+#import <FacebookSDK/FacebookSDK.h>
+#import "JASidePanelController.h"
+
+#define DEBUG 1
+
+@interface AKAPPAppDelegate(Private) <AKLoginViewControllerDelegate, AKSessionObjectDelegate>
+
+@end
 
 @implementation AKAPPAppDelegate
-
+{
+    AKSessionObject *_session;
+}
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    
+    //set object manager
+    NSString *sitePath = @"http://hive.peerglobe.com/";
+//    sitePath = @"http://localhost/anahita/branches/search/site";
+    
+    AKGlobalConfiguration.sharedInstance.siteURL = [NSURL URLWithString:sitePath];
+    
+
+    [AKGlobalConfiguration.sharedInstance addOAuthConsumer:
+         [AKOAuthConsumer consumerForService:@"facebook" key:@"456835081039936" secret:@"450fec0dd9bdcc55ed5d8a3354b12c53"]
+    ];
+    
+    [AKGlobalConfiguration.sharedInstance addOAuthConsumer:
+         [AKOAuthConsumer consumerForService:@"twitter" key:@"NrywHQQEqssEIFh8aawMg" secret:@"FhqfwLtbF9rqWWaQGq3qWljz0BnPzgjfxK6VC7pF8"]
+     ];
+    
+    _session = [AKSessionObject new];
+    _session.delegate = self;
+    [_session login];
+    
+    [self.window makeKeyAndVisible];
     return YES;
 }
-							
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    if ( nil != FBSession.activeSession ) {
+        [FBSession.activeSession handleOpenURL:url];
+    }
+    return YES;
+}
+
+#pragma mark AKSessionObjectDelegate
+
+- (void)sessionObject:(AKSessionObject *)sessionObject didAuthenticatePerson:(AKPersonObject *)person
+{
+    [self startApplication];
+}
+
+- (void)sessionObject:(AKSessionObject *)sessionObject didFailAuthenticationWithError:(AKSessionAuthenticationError)error
+{
+    [self showLoginView];
+}
+
+#pragma mark AKUILoginControllerDelegate
+
+- (void)loginController:(AKLoginViewController *)loginController didLoginPerson:(AKPersonObject *)person
+{
+    [self startApplication];
+}
+
+- (void)startApplication
+{
+    AKNavigationViewController *navController = [AKNavigationViewController new];
+    
+    AKPersonObject *person = [AKSessionObject viewer];
+    
+    [navController addNavigationItem:
+         [AKNavigationItem instantiateUsingBlock:^(AKNavigationItem* instance) {
+            instance.controller = [AKActorDetailViewController detailViewControllerForActor:person];
+            instance.title = person.name;
+            instance.iconImageURL = [person.imageURL imageURLWithImageSize:kAKSquareImageURL];
+        }]
+    ];
+
+    [navController addNavigationItem:[AKNavigationItem instantiateUsingBlock:^(AKNavigationItem* instance) {
+        AKStoryListViewController *storyController = [AKStoryListViewController new];
+        storyController.storyQuery.names = @[@"post_add",@"flyer_add"];
+        instance.controller = storyController;
+        instance.title = @"News Feed";
+    }]];
+    
+    [navController addNavigationItem:[AKNavigationItem instantiateUsingBlock:^(AKNavigationItem* instance) {
+        AKActorListViewController *listController = [ComBarsBarListViewController new];
+        listController.objectPaginator = [ComBarsBar paginatorWithQuery:nil];
+        instance.controller = listController;
+        instance.title = @"Bars";
+    }]];
+    
+    [navController addNavigationItem:[AKNavigationItem instantiateUsingBlock:^(AKNavigationItem* instance) {
+        RKObjectLoader *loader = [ComCampusesCampuse loaderWithQuery:nil];
+        ComCampusesListViewController *listController = [ComCampusesListViewController new];
+        listController.objectLoader = loader;
+        instance.controller = listController;
+        instance.title = @"Schools";
+    }]];    
+    
+    [navController addNavigationItem:[AKNavigationItem instantiateUsingBlock:^(AKNavigationItem* instance) {
+        AKPersonFormViewController *formController = [AKPersonFormViewController new];
+        formController.personObject = person;
+        instance.controller = formController;
+        instance.title = @"Edit Profile";
+    }]];
+    
+    [navController addNavigationItem:[AKNavigationItem instantiateUsingBlock:^(AKNavigationItem* instance) {
+        instance.onSelect = ^() {
+            [self showLoginView];
+        };
+        instance.title = @"Logout";
+    }]];
+    
+    navController.selectedIndex = 1;
+    JASidePanelController *viewController = [JASidePanelController new];
+    viewController.leftPanel  = navController;
+    viewController.centerPanel= navController.contentController;
+    if ( self.window.rootViewController ) {
+        [self.window.rootViewController.view removeFromSuperview];
+    }
+    _window.rootViewController = viewController; 
+}
+
+- (void)showLoginView
+{
+    //show the login page
+    AKLoginViewController *loginController = [AKLoginViewController new];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:loginController];
+    loginController.delegate = self;
+    if ( self.window.rootViewController ) {
+        [self.window.rootViewController.view removeFromSuperview];
+    }
+    self.window.rootViewController = navController;
+    [self.window addSubview:navController.view];    
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

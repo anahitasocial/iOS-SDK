@@ -6,8 +6,16 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import "NSArray+AKCore.h"
-
 @implementation NSArray (AKCore)
+
+- (NSArray*)arrayByMappingObjectsUsingBlock:(id(^)(id obj, NSUInteger idx))block
+{
+    NSMutableArray *newArray = [NSMutableArray array];
+    [self enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            id result = block(obj,idx);
+            [newArray addObject:result];
+    }];
+    return newArray;
+}
 
 @end

@@ -6,11 +6,11 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-
+/*
 #import <QuartzCore/QuartzCore.h>
 
 #import "AKActorProfileViewController.h"
-#import "AKImageURLs.h"
+
 #import "AKActorEntity.h"
 #import "AKActorListTableViewController.h"
 
@@ -52,7 +52,7 @@
         
         UIImageView *avatarImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, avatar,avatar)];
         
-        [avatarImage setImageWithURL:[self.actor.imageURLs imageURLWithImageSize:AKObjectImageSquare]];
+///        [avatarImage setImageWithURL:[self.actor.imageURLs imageURLWithImageSize:AKObjectImageSquare]];
         avatarImage.layer.cornerRadius = 5.0;
         avatarImage.layer.masksToBounds = YES;
 //        avatarImage.layer.borderColor = [UIColor colorWithHex:@"eee"].CGColor;
@@ -142,3 +142,4 @@
 
 
 @end
+*/

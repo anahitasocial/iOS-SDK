@@ -14,19 +14,47 @@
 
 @implementation AKGraphViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
+    //lets add a segment control
+    if ( self.segmentControl.selectedSegmentIndex == kAKGraphFollowersSegmentedControlIndex )
+        self.objectPaginator = self.actor.paginatorForFollowers;
+    else if ( [self.actor respondsToSelector:@selector(paginatorForLeaders)])
+        self.objectPaginator = [((id)self.actor) paginatorForLeaders];
+    
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+}
+
+- (UISegmentedControl*)segmentControl
+{
+    if ( !_segmentControl ) {
+        NSMutableArray *segments = [NSMutableArray arrayWithObject:@"Followers"];
+        if ( [self.actor respondsToSelector:@selector(paginatorForLeaders)] ) {
+            [segments addObject:@"Leaders"];
+        }
+        _segmentControl = [[UISegmentedControl alloc] initWithItems:segments];
+        _segmentControl.segmentedControlStyle = UISegmentedControlStyleBar;
+        [_segmentControl setSelectedSegmentIndex:kAKGraphFollowersSegmentedControlIndex];
+        [_segmentControl addTarget:self action:@selector(segmentedControlValueDidChange:) forControlEvents:UIControlEventValueChanged];
+        
+        //only add it to title if there's at least 2 segments
+        if ( segments.count > 1 ) {
+            self.navigationItem.titleView = _segmentControl;
+        }
+    }
+    
+    return _segmentControl;
+}
+
+- (void)segmentedControlValueDidChange:(id)sender
+{
+    //lets add a segment control
+    if ( self.segmentControl.selectedSegmentIndex == kAKGraphFollowersSegmentedControlIndex )
+        self.objectPaginator = self.actor.paginatorForFollowers;
+    else if ( [self.actor respondsToSelector:@selector(paginatorForLeaders)])
+        self.objectPaginator = [((id)self.actor) paginatorForLeaders];
+   
+   [self reloadData];
 }
 
 - (void)didReceiveMemoryWarning

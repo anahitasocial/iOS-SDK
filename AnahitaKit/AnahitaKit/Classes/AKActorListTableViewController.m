@@ -7,13 +7,12 @@
 //
 
 #import "RestKit.h"
-#import "RKTableViewCellMapping.h"
-#import "RKTableController.h"
-#import "RKTableSection.h"
+//#import "RKTableViewCellMapping.h"
+//#import "RKTableController.h"
+//#import "RKTableSection.h"
 
 #import "AKActorListTableViewController.h"
 #import "AKActorProfileViewController.h"
-#import "AKImageURLs.h"
 #import "AKActorEntity.h"
 #import "UIImageView+Loader.h"
 #import "AKMapViewContoller.h"
@@ -148,8 +147,8 @@
     }];
 
     name.text = actor.name;
-    NSURL *imageURL = [actor.imageURLs imageURLWithImageSize:AKObjectImageSquare];    
-    [imageView setImageWithURL:imageURL];
+//    NSURL *imageURL = [actor.imageURLs imageURLWithImageSize:AKObjectImageSquare];
+//    [imageView setImageWithURL:imageURL];
 
 }
 

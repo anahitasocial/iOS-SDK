@@ -14,25 +14,37 @@
 
 @implementation AKStoryListViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    self.shouldShowSearchBar = NO;
+    self.objectPaginator = [AKStoryObject paginatorWithQuery:self.storyQuery];
+    self.entityCellClass = [AKStoryObjectCell class];
+    [super viewDidLoad];	
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (AKStoryQueryObject*)storyQuery
+{
+    if ( !_storyQuery ) {
+        _storyQuery = [AKStoryQueryObject new];
+    }
+    return _storyQuery;
+}
+
+- (void)view:(UIView *)view didPostNotification:(NSNotification *)aNotification
+
+{
+    if ( [aNotification.object isKindOfClass:[AKStoryObject class]] ) {
+        AKStoryObject *story = (AKStoryObject*)aNotification.object;
+        aNotification = [NSNotification notificationWithName:aNotification.name object:story.object];
+    }
+    [super view:view didPostNotification:aNotification];    
 }
 
 @end

@@ -6,8 +6,6 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@class CAGradientLayer;
 
-@interface AKCoreAnimationMethods : Z
-
-@end
+CAGradientLayer *AKAddGradientToView(UIView *view, UIColor *color1,UIColor *color2);

@@ -6,13 +6,13 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import "RKTableController.h"
+//#import "RKTableController.h"
 
-@interface AKProfileViewController : UITableViewController <RKTableControllerDelegate>
+@interface AKProfileViewController : UITableViewController 
 {
 
 @protected
-    RKTableController *_tableController;    
+//    RKTableController *_tableController;
 }
 
 @property (nonatomic,strong) id profileObject;

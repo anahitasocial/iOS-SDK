@@ -6,8 +6,12 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import "AKViewNotifications.h"
-
-@implementation AKViewNotifications
-
-@end
+NSString * const kAKViewDidSelectURLNotification = @"kAKViewDidSelectURLNotification";
+NSString * const kAKViewDidSelectLikeActionNotification = @"kAKViewDidSelectLikeActionNotification";
+NSString * const kAKViewDidSelectUnLikeActionNotification = @"kAKViewDidSelectUnLikeActionNotification";
+NSString * const kAKViewDidSelectFollowActionNotification = @"kAKViewDidSelectFollowActionNotification";
+NSString * const kAKViewDidSelectViewObjectInDetailNotification = @"kAKViewDidSelectViewObjectInDetailNotification";
+NSString * const kAKViewDidSelectFollowersActionNotification = @"kAKViewDidSelectFollowersActionNotification";
+NSString * const kAKViewDidSelectUnFollowActionNotification = @"kAKViewDidSelectUnFollowActionNotification";
+NSString * const kAKViewDidSelectObjectVotersActionNotification = @"kAKViewDidSelectObjectVotersActionNotification";
+NSString * const kAKViewDidSelectMediumImageActionNotification = @"kAKViewDidSelectMediumImageActionNotification";

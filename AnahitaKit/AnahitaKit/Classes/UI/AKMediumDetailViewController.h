@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+@class AKEntityObject;
+
 @interface AKMediumDetailViewController : UIViewController
+
+@property(nonatomic,strong) AKEntityObject *medium;
 
 @end

@@ -6,8 +6,15 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@interface NSObject(AKCore)
 
-@interface NSObject (AKCore)
+/** 
+ @method
+ 
+ @abstract
+*/
++ (id)instantiateUsingBlock:(void(^)(id instance))block;
+
+- (void)performSelector:(SEL)aSelector withArgs:arg1,...;
 
 @end

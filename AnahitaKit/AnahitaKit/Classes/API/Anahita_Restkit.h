@@ -6,9 +6,16 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#ifndef AnahitaKit_Anahita_Restkit_h
-#define AnahitaKit_Anahita_Restkit_h
+@class RKObjectLoader;
 
+typedef void(^RKObjectLoaderBlock)(RKObjectLoader *loader);
 
+typedef void(^AKOnSuccessBlock)();
+typedef void(^AKOnFailureBlock)(NSError* error);
 
-#endif
+#import "AKObjectMapping.h"
+#import "AKEntityConfiguration.h"
+#import "AKParamData.h"
+#import "AKEntityObject.h"
+#import "AKEntityObjectDelegateProxy.h"
+#import "RKObjectPaginator+Anahita.h"

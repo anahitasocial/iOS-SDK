@@ -9,7 +9,7 @@
 #import "RestKit.h"
 #import "AKMapView.h"
 #import "AKEntityProtocols.h"
-#import "AKImageURLs.h"
+//#import "AKImageURLs.h"
 #import "UIImageView+Loader.h"
 #import "AKProfileViewController.h"
 
@@ -34,7 +34,7 @@
 
 - (void)addObjectsFromResourcePath:(NSString *)resourcePath;
 {
-    [[RKObjectManager sharedManager] loadObjectsAtResourcePath:resourcePath delegate:self];    
+//    [[RKObjectManager sharedManager] loadObjectsAtResourcePath:resourcePath delegate:self];
 }
 
 - (void)addObjects:(NSArray *)objects

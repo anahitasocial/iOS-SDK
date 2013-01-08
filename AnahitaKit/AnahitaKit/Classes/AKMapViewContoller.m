@@ -14,7 +14,7 @@
 #import "AKMapView.h"
 #import "AKProfileViewController.h"
 #import "AKEntityProtocols.h"
-#import "AKImageURLs.h"
+//#import "AKImageURLs.h"
 #import "UIImageView+Loader.h"
 
 @implementation AKMapViewContoller
@@ -37,8 +37,8 @@
     }
     
     if ( [object conformsToProtocol:@protocol(AKEntityPortriable)] ) {
-        NSURL *imageURL = [((id<AKEntityPortriable>)object).imageURLs imageURLWithImageSize:AKObjectImageSquare];
-        NSLog(@"%@", imageURL);
+//        NSURL *imageURL = [((id<AKEntityPortriable>)object).imageURLs imageURLWithImageSize:AKObjectImageSquare];
+//        NSLog(@"%@", imageURL);
         // annotation.title = ((id<AKImageAttribute>)object).name;
     }
     
@@ -79,8 +79,8 @@
     
     if ( [object conformsToProtocol:@protocol(AKEntityPortriable)] ) {
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-        NSURL *imageURL = [((id<AKEntityPortriable>)object).imageURLs imageURLWithImageSize:AKObjectImageSquare];
-        [imageView setImageWithURL:imageURL];
+//        NSURL *imageURL = [((id<AKEntityPortriable>)object).imageURLs imageURLWithImageSize:AKObjectImageSquare];
+//        [imageView setImageWithURL:imageURL];
         annView.leftCalloutAccessoryView = imageView;
     }
     

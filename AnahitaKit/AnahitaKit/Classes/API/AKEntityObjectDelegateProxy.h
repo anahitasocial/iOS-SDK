@@ -6,8 +6,24 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@class AKEntityObject;
+@protocol RKObjectLoaderDelegate;
 
-@interface AKEntityObjectDelegateProxy : NSObject
+/**
+ @class AKEntityObjectDelegateProxy
+ 
+ @abstract
+ This class will intercept calls to delegate and 
+ */
+@interface AKEntityObjectDelegateProxy : AKArrayProxy
+
+/**
+ @method
+ 
+ @abstract
+ Initializes a proxy delegate, The loader delegate can be null
+ */
+- (id)initWithObjectEntity:(AKEntityObject*)entityObject
+      objectLoaderDelegate:(id<RKObjectLoaderDelegate>)loaderDelegate;
 
 @end

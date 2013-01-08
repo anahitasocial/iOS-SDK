@@ -6,36 +6,19 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import "AKSession.h"
-#import "AKAuthentication.h"
-#import "AKPerson.h"
+
 #import "RestKit.h"
 
 /**
  Session notifications
  */
-NSString *const AKSessionReadyNotification = @"AKSessionReadyNotification";
-NSString *const AKSessionErrorNotification = @"AKSessionErrorNotification";
-
-/**
- Private subclass of RKObjectManager
- */
-@interface AKSessionObjectManager : RKObjectManager
-
-@end
+NSString *const AKSessionIsAuthenticatedNotification        = @"AKSessionIsAuthenticatedNotification";
+NSString *const AKSessionRequiresAuthenticationNotification = @"AKSessionRequiresAuthenticationNotification";
 
 /**
  Private session methods
  */
 @interface AKSession(Private)
-
-/**
- Initializes a session with a baseURL
- 
- @param URL Site base URL
- @return A session
- */
-- (id)initWithBaseURL:(NSURL*)URL;
 
 /**
  Called after a succesful authentication
@@ -45,88 +28,67 @@ NSString *const AKSessionErrorNotification = @"AKSessionErrorNotification";
 @end
 
 @implementation AKSession
-{
-    //internal authentication class
-     AKAuthentication *_authentication;
-    
+{    
     //private object manager class
-     AKSessionObjectManager *_objectManager;
+     RKObjectManager *_objectManager;
 }
 
-//creates a new session
-+ (id)sessionWithBaseURL:(NSURL *)URL
+//shared session
++ (id)sharedSession
 {
-    AKSession *session = [[AKSession alloc] initWithBaseURL:URL];
-    return session;
+    static dispatch_once_t onceToken;
+    static id sharedInstance;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] initWithObjectManager:[RKObjectManager sharedManager]];
+    });
+    return sharedInstance;
 }
 
-//initilize a session with credential
-- (id)initWithBaseURL:(NSURL *)URL
+- (id)initWithObjectManager:(RKObjectManager*)objectManager
 {
     if ( self = [super init] )
-    {        
+    {
         //initialize the object manager
-        _objectManager = [[AKSessionObjectManager alloc] initWithBaseURL:[RKURL URLWithBaseURL:URL]];
+        _objectManager = objectManager;
+        _authenticated = NO;
     }
     
     return self;
 }
 
 #pragma mark Starting session
+#import <objc/objc.h>
+#import <objc/runtime.h>
 
-- (void)start
+- (void)checkSessionIsAuthenticated
 {
-    //get the person;
-    RKObjectMapping *mapping = [RKObjectMapping mappingForClass:[AKPerson class]];
-    [mapping mapAttributes:@"id",@"name", nil];
+    __block id<AKSessionDelegate> delegate = self.delegate;
     
-    [self.objectManager.mappingProvider setObjectMapping:mapping forResourcePathPattern:@"/people/person"];
-    
-    __block RKObjectLoader *loader = [self.objectManager loaderWithResourcePath:@"/people/person"];
-    
-    loader.onDidLoadResponse = ^(RKResponse *response) {
-        if ( !response.isOK ) {
-            //session is okay then lets dispatch the notification
-            [[NSNotificationCenter defaultCenter] postNotificationName:AKSessionErrorNotification object:self];
-        }
-    };
-    
-    //on load object if the response is ok and
-    //person has been materialzed. This block is run in the main block
-    loader.onDidLoadObject = ^(AKPerson *person) {
-        if ( loader.response.isOK && person != nil ) {
-            _viewer = person;
-            //session is okay then lets dispatch the notification
-            [[NSNotificationCenter defaultCenter] postNotificationName:AKSessionReadyNotification object:self];
-        }
-    };
-
-    [loader send];
-}
-
-#pragma mark Authentication
-
-- (AKAuthentication*)authentication
-{
-    if ( !_authentication )
-    {
-        _authentication = [[AKAuthentication alloc] initWithObjectManager:self.objectManager];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(authenticationDidSucceed) name:AKAuthenticationDidSucceedNotification object:_authentication];
-    }
-    return _authentication;
-}
-
-- (void)authenticationDidSucceed
-{
-    _authenticated = YES;
+    [[AKPersonObject sharedRepository] loadWithQueryDictionary:[NSDictionary dictionary] loader:^(RKObjectLoader *loader) {
+        loader.onDidLoadResponse = ^(RKResponse *response) {
+            if ( !response.isOK ) {
+                if ( delegate != NULL ) {
+                    [delegate sessionRequiresAuthentication:self];
+                }
+                //session is okay then lets dispatch the notification
+                [[NSNotificationCenter defaultCenter] postNotificationName:AKSessionRequiresAuthenticationNotification object:self];
+            }
+        };        
+        //on load object if the response is ok and
+        //person has been materialzed. This block is run in the main block
+        loader.onDidLoadObject = ^(AKPersonObject *person) {
+            if ( loader.response.isOK && person != nil ) {
+                if ( delegate != NULL ) {
+                    [delegate session:self isAuthenticatedWithPerson:person];
+                }
+                _viewer = person;
+                _authenticated = YES;
+                //session is okay then lets dispatch the notification
+                [[NSNotificationCenter defaultCenter] postNotificationName:AKSessionIsAuthenticatedNotification object:self];
+            }
+        };
+    }];
 }
 
 @end
 
-/**
- Session object manager
- */
-@implementation AKSessionObjectManager
-
-
-@end

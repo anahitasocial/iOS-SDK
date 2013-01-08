@@ -6,8 +6,38 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@class AKActorObject;
 
-@interface AKActorHeader : UIView
+/**
+ @class AKActorHeaderView
+ 
+ @abstract
+ Displays on top of AKActorDetailViewController
+ 
+*/
+@interface AKActorHeaderView : UIView
+{
+
+@protected
+    UIImageView *_imageView;
+    UILabel *_nameLabel;
+    UILabel *_metaLabel;
+    UIButton *_followersBtn;
+}
+
+/**
+ @method
+ 
+ @abstract
+ 
+ @return 
+*/
+- (id)initWithActor:(AKActorObject*)actorObject;
+
+/** @abstract Actor object */
+@property(nonatomic,readonly) AKActorObject *actorObject;
+
+/** @abstract Actor object */
+@property(nonatomic,weak) id<AKViewNotificationDelegate> notificationDelegate;
 
 @end

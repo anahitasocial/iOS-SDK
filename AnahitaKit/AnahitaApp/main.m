@@ -12,6 +12,7 @@
 
 int main(int argc, char *argv[])
 {
+    __APPLY_MIXINS();
     @autoreleasepool {
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AKAPPAppDelegate class]));
     }
