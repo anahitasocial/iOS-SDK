@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import "Vendors/RestKit.h"
+#import "RestKit.h"
 #import "AKMapView.h"
 #import "AKEntityProtocols.h"
 #import "AKImageURLs.h"

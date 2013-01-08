@@ -9,7 +9,7 @@
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-#import "Vendors/RestKit.h"
+#import "RestKit.h"
 #import "AKMapViewContoller.h"
 #import "AKMapView.h"
 #import "AKProfileViewController.h"

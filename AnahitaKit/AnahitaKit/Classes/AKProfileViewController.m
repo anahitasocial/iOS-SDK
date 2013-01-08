@@ -7,7 +7,6 @@
 //
 
 #import "AKProfileViewController.h"
-#import "Vendors/UIColor+SSToolkitAdditions.h"
 
 @implementation AKProfileViewController
 
@@ -23,7 +22,7 @@
     _tableController.objectManager = [RKObjectManager sharedManager];
     _tableController.variableHeightRows = YES;  
     
-    self.tableView.backgroundColor = [UIColor colorWithHex:@"eee"];    
+//    self.tableView.backgroundColor = [UIColor colorWithHex:@"eee"];
 }
 
 @end

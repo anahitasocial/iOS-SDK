@@ -15,13 +15,11 @@
 #import "AKActorListTableViewController.h"
 
 #import "UIImageView+Loader.h"
-#import "Vendors/PrettyKit.h"
-#import "Vendors/SSDrawingUtilities.h"
-#import "Vendors/UIColor+SSToolkitAdditions.h"
-#import "Vendors/RKTableViewCellMapping.h"
-#import "Vendors/RKTableController.h"
-#import "Vendors/RKTableViewCellMapping.h"
-#import "Vendors/RKObjectMapping.h"
+
+#import "RKTableViewCellMapping.h"
+#import "RKTableController.h"
+#import "RKTableViewCellMapping.h"
+#import "RKObjectMapping.h"
 
 @implementation AKActorProfileViewController
 
@@ -36,11 +34,11 @@
         
     //draw actor info
     RKTableViewCellMapping *cellMapping = [RKTableViewCellMapping cellMapping];
-    cellMapping.cellClass = [PrettyTableViewCell class];
+//    cellMapping.cellClass = [PrettyTableViewCell class];
     cellMapping.rowHeight   = 200;
     cellMapping.reuseIdentifier = @"ActorInfo";
     cellMapping.onCellWillAppearForObjectAtIndexPath = ^(UITableViewCell *cell, id object, NSIndexPath *indexPath) {
-        [(PrettyTableViewCell*)cell prepareForTableView:self.tableView indexPath:indexPath];
+  //      [(PrettyTableViewCell*)cell prepareForTableView:self.tableView indexPath:indexPath];
         int padding = 5;       
         int width   = 290;
         int height  = 190;
@@ -57,7 +55,7 @@
         [avatarImage setImageWithURL:[self.actor.imageURLs imageURLWithImageSize:AKObjectImageSquare]];
         avatarImage.layer.cornerRadius = 5.0;
         avatarImage.layer.masksToBounds = YES;
-        avatarImage.layer.borderColor = [UIColor colorWithHex:@"eee"].CGColor;        
+//        avatarImage.layer.borderColor = [UIColor colorWithHex:@"eee"].CGColor;
         
         
         UILabel *nameLabel = [[UILabel alloc] 
@@ -67,7 +65,7 @@
         nameLabel.font  = [UIFont fontWithName:@"Arial-BoldMT" size:17];    
         
         nameLabel.text  = self.actor.name;
-        nameLabel.textColor = [UIColor colorWithHex:@"777"];
+//        nameLabel.textColor = [UIColor colorWithHex:@"777"];
         nameLabel.numberOfLines = 0;
         nameLabel.backgroundColor = [UIColor clearColor];
         
@@ -79,7 +77,7 @@
         descLabel.text = actor.body;
         descLabel.font = [UIFont fontWithName:@"Arial" size:14];
         descLabel.numberOfLines = 0;
-        descLabel.textColor = [UIColor colorWithHex:@"999"];
+//        descLabel.textColor = [UIColor colorWithHex:@"999"];
         descLabel.backgroundColor = [UIColor clearColor];
         [contentView addSubview:descLabel];
         [contentView addSubview:avatarImage];        
@@ -94,9 +92,9 @@
     
     cellMapping = [RKTableViewCellMapping defaultCellMapping];
     cellMapping.reuseIdentifier = @"ActorActions";    
-    cellMapping.cellClass = [PrettyTableViewCell class];
+//    cellMapping.cellClass = [PrettyTableViewCell class];
     cellMapping.onCellWillAppearForObjectAtIndexPath = ^(UITableViewCell *cell, id object, NSIndexPath *indexPath) {
-        [(PrettyTableViewCell*)cell prepareForTableView:self.tableView indexPath:indexPath];  
+//        [(PrettyTableViewCell*)cell prepareForTableView:self.tableView indexPath:indexPath];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     };
     cellMapping.onSelectCellForObjectAtIndexPath = ^(UITableViewCell *cell, id object, NSIndexPath *indexPath) {

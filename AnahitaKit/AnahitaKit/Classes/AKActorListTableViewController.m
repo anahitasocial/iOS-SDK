@@ -6,12 +6,10 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import "Vendors/RestKit.h"
-#import "Vendors/RKTableViewCellMapping.h"
-#import "Vendors/RKTableController.h"
-#import "Vendors/PrettyKit.h"
-#import "Vendors/UIColor+SSToolkitAdditions.h"
-#import "Vendors/RKTableSection.h"
+#import "RestKit.h"
+#import "RKTableViewCellMapping.h"
+#import "RKTableController.h"
+#import "RKTableSection.h"
 
 #import "AKActorListTableViewController.h"
 #import "AKActorProfileViewController.h"
@@ -20,6 +18,7 @@
 #import "UIImageView+Loader.h"
 #import "AKMapViewContoller.h"
 #import "UIView+Subview.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation AKActorListTableViewController
 
@@ -57,7 +56,7 @@
 
     //configure cell mapping
     RKTableViewCellMapping *cellMapping = [RKTableViewCellMapping cellMapping];
-    cellMapping.cellClass = [PrettyTableViewCell class];
+//    cellMapping.cellClass = [PrettyTableViewCell class];
     
     [_tableController.cellMappings setCellMapping:cellMapping forClass:_actorClass];
     
@@ -87,7 +86,7 @@
         self.tableView.tableHeaderView = searchBar;        
     }
     
-    self.tableView.backgroundColor = [UIColor colorWithHex:@"eee"];        
+    //self.tableView.backgroundColor = [UIColor colorWithHex:@"eee"];
 }
 
 #pragma mark RKTableControllerDelegate
@@ -116,7 +115,6 @@
     }
     
     //prepare cell
-    [(PrettyTableViewCell*)cell prepareForTableView:self.tableView indexPath:indexPath];
     
     RKTableViewCellMapping *mapping = [_tableController cellMappingForObjectAtIndexPath:indexPath];    
     
@@ -142,7 +140,7 @@
     
     UILabel *name = (UILabel*)[box addSubviewWithTag:101 usingBlock:^UIView *{
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(height + 5, 0, CGRectGetWidth(boxFrame) - CGRectGetMaxX(imageView.frame) - height, height)];
-        label.textColor = [UIColor colorWithHex:@"777"];
+//        label.textColor = [UIColor colorWithHex:@"777"];
         label.numberOfLines = 2;
         label.font = [UIFont fontWithName:@"Arial" size:14];
         label.backgroundColor = [UIColor clearColor];

@@ -7,7 +7,7 @@
 //
 
 #import "AKAbstractEntity.h"
-#import "Vendors/RestKit.h"
+#import "RestKit.h"
 
 @implementation AKAbstractEntity
 

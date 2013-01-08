@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import "Vendors/RestKit.h"
-#import "Vendors/RKTableController.h"
+#import "RestKit.h"
+#import "RKTableController.h"
 
 #import "AKEntityListTableViewController.h"
 

@@ -9,7 +9,7 @@
 
 #import <MapKit/MapKit.h>
 
-#import "Vendors/RestKit.h"
+#import "RestKit.h"
 
 @class AKMapView;
 
