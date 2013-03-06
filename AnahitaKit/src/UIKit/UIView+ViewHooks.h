@@ -6,16 +6,8 @@
 //
 //
 
-
-typedef void(^AKViewDrawRectBlock)(CGRect rect);
-typedef void(^AKViewLayoutSubViewsBlock)();
-
-typedef void(^AKViewDidAddSubViewBlock)(UIView* view);
-typedef AKViewDidAddSubViewBlock AKViewWillRemoveSubViewBlock;
-typedef AKViewDidAddSubViewBlock AKViewWillMoveToSuperViewBlock;
-typedef void(^AKViewDidMoveToSuperView)();
-
 #import "AKMixin.h"
+
 
 /**
  @protocol 
@@ -23,43 +15,37 @@ typedef void(^AKViewDidMoveToSuperView)();
  @abstract
  View Notification behavior adds notificaiton ability to any view
 */
-@interface UIView(ViewHooks)
+@interface UIView(AKObservable)
 
 /** @abstract */
-@property(nonatomic,strong) AKViewLayoutSubViewsBlock beforeLayoutSubViewsBlock;
+- (void)addObserver:(id)notificationObserver selector:(SEL)notificationSelector name:(NSString *)notificationName;
 
 /** @abstract */
-@property(nonatomic,strong) AKViewLayoutSubViewsBlock layoutSubViewsBlock;
+- (id)addObserverForName:(NSString *)name queue:(NSOperationQueue *)queue usingBlock:(void (^)(NSNotification *))block;
 
 /** @abstract */
-@property(nonatomic,strong) AKViewLayoutSubViewsBlock afterLayoutSubViewsBlock;
+- (id)addObserverForName:(NSString *)name usingBlock:(void (^)(NSNotification *))block;
 
 /** @abstract */
-@property(nonatomic,strong) AKViewDrawRectBlock beforeDrawRectBlock;
+- (void)removeObserver:(id)notificationObserver;
 
 /** @abstract */
-@property(nonatomic,strong) AKViewDrawRectBlock drawRectBlock;
+- (void)removeObserver:(id)notificationObserver name:(NSString *)notificationName;
 
 /** @abstract */
-@property(nonatomic,strong) AKViewDrawRectBlock afterDrawRectBlock;
+- (void)postNotificationName:(NSString *)aName;
 
 /** @abstract */
-@property(nonatomic,strong) AKViewDidAddSubViewBlock didAddSubViewBlock;
-
-/** @abstract */
-@property(nonatomic,strong) AKViewWillRemoveSubViewBlock willRemoveSubViewBlock;
-
-/** @abstract */
-@property(nonatomic,strong) AKViewWillMoveToSuperViewBlock willMoveToSuperViewBlock;
-
-/** @abstract */
-@property(nonatomic,strong) AKViewDidMoveToSuperView didMoveToSuperViewBlock;
+- (void)postNotificationName:(NSString *)aName userInfo:(NSDictionary *)aUserInfo;
 
 @end
 
 DEFINE_BEHAVIOR(AKViewHookBehavior) @end
 
-@interface UIView(HookableView)
+typedef void(^AKViewDrawRectBlock)(CGRect rect);
+typedef void(^AKViewLayoutSubViewsBlock)();
+
+@interface UIView(AKViewUsingBlocks)
 
 + (UIView*)viewWithFrame:(CGRect)frame;
 
@@ -71,10 +57,13 @@ DEFINE_BEHAVIOR(AKViewHookBehavior) @end
  @abstract 
  Adds extra properties to a notification class
 */
-@interface NSNotification(AKViewHookNotification)
+@interface NSNotification(AKViewNotification)
 
 /** @abstract */
 @property(nonatomic,readonly) UIView *view;
+
+/** @abstract */
+@property(nonatomic,readonly) CGRect drawRect;
 
 @end
 
@@ -82,3 +71,17 @@ DEFINE_BEHAVIOR(AKViewHookBehavior) @end
  View Notifications
 */
 extern NSString *const kAKViewDidInitNotification;
+
+extern NSString *const kAKViewWillDrawRectNotification;
+extern NSString *const kAKViewDidDrawRectNotification;
+
+extern NSString *const kAKViewWillLayoutSubViewsNotification;
+extern NSString *const kAKViewDidLayoutSubViewsNotification;
+
+extern NSString *const kAKViewWillLayoutSubViewsNotification;
+extern NSString *const kAKViewDidLayoutSubViewsNotification;
+
+extern NSString *const kAKViewWillRemoveSubViewNotification;
+extern NSString *const kAKViewDidAddSubViewNotification;
+extern NSString *const kAKViewWillMoveToSuperViewNotification;
+extern NSString *const kAKViewDidMoveToSuperViewNotification;

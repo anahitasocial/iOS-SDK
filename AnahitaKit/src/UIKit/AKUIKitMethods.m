@@ -9,12 +9,12 @@
 #import "AKUIKitMethods.h"
 #import <QuartzCore/QuartzCore.h>
 
-UIColor *AKDarkerUIColor(UIColor* color)
+UIColor *AKColorDarker(UIColor* color)
 {
-    return AKDarkenUIColor(color, 1);
+    return AKColorDarken(color, 1);
 }
 
-UIColor *AKDarkenUIColor(UIColor* color, int amount)
+UIColor *AKColorDarken(UIColor* color, NSUInteger amount)
 {
     float h, s, b, a;
     for(int i = 0;i<amount;i++)
@@ -29,13 +29,22 @@ UIColor *AKDarkenUIColor(UIColor* color, int amount)
     return color;
 }
 
-
-UIColor *AKLighterUIColor(UIColor* color)
+UIColor *AKColorWithValue(AKColorValue value)
 {
-    return AKLightenUIColor(color, 1);
+    return AKColorWithValueAlpha(value, 1.0f);
 }
 
-UIColor *AKLightenUIColor(UIColor* color, int amount)
+UIColor *AKColorWithValueAlpha(AKColorValue value, CGFloat alpha)
+{
+    return [UIColor colorWithRed:(value >> 16)/255.0f green:((value & 0xff00) >> 8) /255.0f blue:(value & 0xff)/255.0f alpha:alpha];
+}
+
+UIColor *AKColorLighter(UIColor* color)
+{
+    return AKColorLighten(color, 1);
+}
+
+UIColor *AKColorLighten(UIColor* color, NSUInteger amount)
 {
 
     float h, s, b, a;

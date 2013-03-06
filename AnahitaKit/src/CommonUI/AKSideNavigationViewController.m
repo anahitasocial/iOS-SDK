@@ -135,7 +135,7 @@
     _tableView.delegate = self;
     self.view = _tableView;
     _tableView.backgroundColor = [UIColor whiteColor];
-    _tableView.separatorColor  = HEXCOLOR(0xa1a1a1);
+    _tableView.separatorColor  = AKColorWithValue(0xa1a1a1);
 }
 
 - (UIViewController*)contentController

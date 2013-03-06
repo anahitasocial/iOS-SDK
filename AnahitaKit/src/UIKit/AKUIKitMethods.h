@@ -6,12 +6,7 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#define AKUIAlertViewShowAlert(title,body) \
-    [[[UIAlertView alloc] initWithTitle:title message:body delegate:self \
-    cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
-
-
-#define AKMainScreenSize [[UIScreen mainScreen] bounds].size
+//#define AKMainScreenSize [[UIScreen mainScreen] bounds].size
 
 /**
  @method
@@ -48,33 +43,49 @@ static inline UIEdgeInsets UIEdgeInsetsMake2(int topbottom, int leftright) {
     return UIEdgeInsetsMake(topbottom, leftright, topbottom, leftright);
 }
 
-/**
- @method
- 
- @abstract
-*/
-UIColor *AKDarkerUIColor(UIColor* color);
+typedef NSUInteger AKColorValue;
 
 /**
  @method
  
  @abstract
 */
-UIColor *AKDarkenUIColor(UIColor* color, int amount);
+UIColor *AKColorWithValue(AKColorValue value);
 
 /**
  @method
  
  @abstract
 */
-UIColor *AKLighterUIColor(UIColor* color);
+UIColor *AKColorWithValueAlpha(AKColorValue value, CGFloat alpha);
 
 /**
  @method
  
  @abstract
 */
-UIColor *AKLightenUIColor(UIColor* color, int amount);
+UIColor *AKColorDarker(UIColor* color);
+
+/**
+ @method
+ 
+ @abstract
+*/
+UIColor *AKColorDarken(UIColor* color, NSUInteger amount);
+
+/**
+ @method
+ 
+ @abstract
+*/
+UIColor *AKColorLighter(UIColor* color);
+
+/**
+ @method
+ 
+ @abstract
+*/
+UIColor *AKColorLighten(UIColor* color, NSUInteger amount);
 
 
 /**
