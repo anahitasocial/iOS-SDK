@@ -113,19 +113,16 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
 {
     if ( callback )
     {
-        Class class = [object class];
-
-        while (!class_conformsToProtocol(class, @protocol(AKViewHookBehavior))) {
-            class = class_getSuperclass(class);
-        }
+        Class class = class_getImplementingClass([object class], newMethod);
         
         AKSwizzleMethodBackForParentClass(class_getSuperclass(class), oldMethod, newMethod, stopClass, nil);
         callback();
         AKSwizzleMethodBackForParentClass(class_getSuperclass(class), oldMethod, newMethod, stopClass, nil);
     }
-    else {
-        if ( class_conformsToProtocol(object, @protocol(AKViewHookBehavior))        
-        ) {
+    else
+    {
+        if ( class_selectorInMethodList(object, newMethod) )
+        {
             [object jr_swizzleMethod:oldMethod withMethod:newMethod error:nil];
         }
         if ( object != stopClass && [object isSubclassOfClass:stopClass]) {
@@ -159,15 +156,18 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
     }
 }
 
-+ (void)mixinDidMixSelectors:(NSMutableArray *)selectors withClass:(Class)class
-{    
-    if ( [class isSubclassOfClass:[UITableView class]]) {
++ (void)swizzleViewClassMethods:(Class)class
+{
+    if ( [class isSubclassOfClass:[UITableView class]])
+    {
         [self exchangeMethod:@selector(UITableView_ViewHook_initWithFrame:style:) withClass:class selector:@selector(initWithFrame:style:)];
     }    
-    else if ( [class isSubclassOfClass:[UITableViewCell class]]) {
+    else if ( [class isSubclassOfClass:[UITableViewCell class]])
+    {
         [self exchangeMethod:@selector(UITableViewCell_ViewHook_initWithStyle:reuseIdentifier:) withClass:class selector:@selector(initWithStyle:reuseIdentifier:)];
     }
-    else {
+    else
+    {
         [self exchangeMethod:@selector(UIView_ViewHook_initWithFrame:) withClass:class selector:@selector(initWithFrame:)];
     }
     
@@ -180,7 +180,12 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
         [self exchangeMethod:@selector(UIView_ViewHook_willRemoveSubview:) withClass:class selector:@selector(willRemoveSubview:)];
         [self exchangeMethod:@selector(UIView_ViewHook_willMoveToSuperview:) withClass:class selector:@selector(willMoveToSuperview:)];
         [self exchangeMethod:@selector(UIView_ViewHook_didMoveToSuperview) withClass:class selector:@selector(didMoveToSuperview)];
-    }    
+    }
+}
+
++ (void)mixinDidMixSelectors:(NSMutableArray *)selectors withClass:(Class)class
+{    
+    [self swizzleViewClassMethods:class];
 }
 
 - (id)UIView_ViewHook_initWithFrame:(CGRect)frame
@@ -331,7 +336,7 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
 ADD_BEHAVIOR_TO_CLASS(UIView, AKViewHookBehavior);
 ADD_BEHAVIOR_TO_CLASS(UIView_, AKViewHookBehavior);
 ADD_BEHAVIOR_TO_CLASS(UISearchBar, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UITableViewCell, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UITableViewCell, AKViewHookBehavior);
 ADD_BEHAVIOR_TO_CLASS(UITableView, AKViewHookBehavior);
 ADD_BEHAVIOR_TO_CLASS(UIWebView, AKViewHookBehavior);
 ADD_BEHAVIOR_TO_CLASS(UILabel, AKViewHookBehavior);
