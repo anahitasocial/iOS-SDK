@@ -78,7 +78,15 @@ NSArray *AKSubclassesOfClass(Class class);
  */
 id AKInitBlock(id(^init)());
 
-#define __call(code) AKInitBlock(^id code)
+#define call_block(code) AKInitBlock(^id code)
+
+/**
+ @method
+ 
+ @abstract
+ 
+ */
+Class class_getImplementingClass(Class class, SEL selector);
 
 /**
  @method

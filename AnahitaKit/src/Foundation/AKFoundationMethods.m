@@ -78,8 +78,25 @@ id AKInitBlock(id(^init)()) {
     return init();
 }
 
+
 BOOL class_selectorInMethodList(Class class, SEL selector) {
     return class_getInstanceMethod(class, selector) != class_getInstanceMethod(class_getSuperclass(class), selector);
+}
+
+
+Class class_getImplementingClass(Class class, SEL selector)
+{
+    Class target = NULL;
+    
+    do {
+        if ( !class_selectorInMethodList(class, selector) ) {
+            class = class_getSuperclass(class);
+        } else {
+            target = class;
+        }
+    } while (class && !target);
+    
+    return target;
 }
 
 BOOL class_copyMethod(Class sourceClass, SEL sourceSelector, Class targetClass, SEL targetSelector){
