@@ -19,7 +19,7 @@
  @abstract
  set the point x
 */
-CGPoint CGPointSetX(CGPoint point, CGFloat x);
+CGPoint AKPointSetX(CGPoint point, CGFloat x);
 
 /** 
  @method
@@ -27,14 +27,14 @@ CGPoint CGPointSetX(CGPoint point, CGFloat x);
  @abstract
  set the point y
 */
-CGPoint CGPointSetY(CGPoint point, CGFloat y);
+CGPoint AKPointSetY(CGPoint point, CGFloat y);
 
 /** 
  @method
  
  @abstract
 */
-CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy);
+CGPoint AKPointOffset(CGPoint point, CGFloat dx, CGFloat dy);
 
 /** 
  @method
@@ -42,7 +42,7 @@ CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy);
  @abstract
  Set rect x coordinate
 */
-CGRect CGRectSetX(CGRect rect, CGFloat x);
+CGRect AKRectSetX(CGRect rect, CGFloat x);
 
 /** 
  @method
@@ -50,7 +50,7 @@ CGRect CGRectSetX(CGRect rect, CGFloat x);
  @abstract
  Set rect y coordinate
 */
-CGRect CGRectSetY(CGRect rect, CGFloat y);
+CGRect AKRectSetY(CGRect rect, CGFloat y);
 
 /** 
  @method
@@ -58,14 +58,14 @@ CGRect CGRectSetY(CGRect rect, CGFloat y);
  @abstract
  Set rect x y cooridnate
 */
-CGRect CGRectSetXY(CGRect rect, CGFloat x, CGFloat y);
+CGRect AKRectSetXY(CGRect rect, CGFloat x, CGFloat y);
 /** 
  @method
  
  @abstract
  Set rect origin
 */
-CGRect CGRectSetOrigin(CGRect rect, CGPoint origin);
+CGRect AKRectSetOrigin(CGRect rect, CGPoint origin);
 
 
 /** 
@@ -74,7 +74,7 @@ CGRect CGRectSetOrigin(CGRect rect, CGPoint origin);
  @abstract
  Set rect width
 */
-CGRect CGRectSetWidth(CGRect rect, CGFloat width);
+CGRect AKRectSetWidth(CGRect rect, CGFloat width);
 
 /** 
  @method
@@ -82,7 +82,7 @@ CGRect CGRectSetWidth(CGRect rect, CGFloat width);
  @abstract
  Set rect height
 */
-CGRect CGRectSetHeight(CGRect rect, CGFloat height);
+CGRect AKRectSetHeight(CGRect rect, CGFloat height);
 
 /** 
  @method
@@ -90,7 +90,7 @@ CGRect CGRectSetHeight(CGRect rect, CGFloat height);
  @abstract
  Set rect width and height
 */
-CGRect CGRectSetWidthHeight(CGRect rect, CGFloat width, CGFloat height);
+CGRect AKRectSetWidthHeight(CGRect rect, CGFloat width, CGFloat height);
 
 /** 
  @method
@@ -98,54 +98,54 @@ CGRect CGRectSetWidthHeight(CGRect rect, CGFloat width, CGFloat height);
  @abstract
  Set rect size
 */
-CGRect CGRectSetSize(CGRect rect, CGSize size);
+CGRect AKRectSetSize(CGRect rect, CGSize size);
 /** 
  @method
  
  @abstract
  Divides and return the remainder rect
 */
-CGRect CGRectGetRemainder(CGRect rect, int amount, CGRectEdge divider);
+CGRect AKRectGetRemainder(CGRect rect, int amount, CGRectEdge divider);
 /** 
  @method
  
  @abstract
  Divides and return the slice rect
 */
-CGRect CGRectGetSlice(CGRect rect, int amount, CGRectEdge divider);
+CGRect AKRectGetSlice(CGRect rect, int amount, CGRectEdge divider);
 
 /** 
  @method
  
  @abstract
 */
-CGPoint CGRectGetCenter(CGRect rect);
+CGPoint AKRectGetCenter(CGRect rect);
 
 /** 
  @method
  
  @abstract
 */
-CGRect CGRectSetCenter(CGRect rect, CGPoint center);
+CGRect AKRectSetCenter(CGRect rect, CGPoint center);
 /** 
  @method
  
  @abstract
 */
-CGRect CGRectSetMidX(CGRect rect, CGFloat x);
+CGRect AKRectSetMidX(CGRect rect, CGFloat x);
 /** 
  @method
  
  @abstract
 */
-CGRect CGRectSetMidY(CGRect rect, CGFloat y);
+CGRect AKRectSetMidY(CGRect rect, CGFloat y);
 
 /** 
  @method
  
  @abstract
 */
-NSArray* CGRectDivide2(CGRect rect, NSArray* amounts, CGRectEdge edge);
+NSArray* AKRectDivide2(CGRect rect, NSArray* amounts, CGRectEdge edge);
 
 
 /** 
@@ -153,4 +153,4 @@ NSArray* CGRectDivide2(CGRect rect, NSArray* amounts, CGRectEdge edge);
  
  @abstract
 */
-void AKCGDrawInnerShadow(CGContextRef context, CGRect bounds, CGFloat radious, CGColorRef fillColor, CGSize shadowOffset, CGFloat shadowBlur, CGColorRef shadowColor);
+void AKDrawInnerShadow(CGContextRef context, CGRect bounds, CGFloat radious, CGColorRef fillColor, CGSize shadowOffset, CGFloat shadowBlur, CGColorRef shadowColor);

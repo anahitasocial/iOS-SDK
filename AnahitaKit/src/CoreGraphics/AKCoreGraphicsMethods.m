@@ -8,111 +8,111 @@
 
 #import "AKCoreGraphicsMethods.h"
 
-CGPoint CGPointSetX(CGPoint point, CGFloat x) {
+CGPoint AKPointSetX(CGPoint point, CGFloat x) {
     point.x = x;
     return point;
 }
 
 /** Set point y */
-CGPoint CGPointSetY(CGPoint point, CGFloat y) {
+CGPoint AKPointSetY(CGPoint point, CGFloat y) {
     point.y = y;
     return point;
 }
 
-CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy) {
+CGPoint AKPointOffset(CGPoint point, CGFloat dx, CGFloat dy) {
     point.x += dx;
     point.y += dy;
     return point;
 }
 
 /** Set rect x */
-CGRect CGRectSetX(CGRect rect, CGFloat x) {
+CGRect AKRectSetX(CGRect rect, CGFloat x) {
     rect.origin.x = x;
     return rect;
 }
 
 /** Set rect y coordinate */
-CGRect CGRectSetY(CGRect rect, CGFloat y) {
+CGRect AKRectSetY(CGRect rect, CGFloat y) {
     rect.origin.y = y;
     return rect;
 }
 
 /** Set rect x y cordinates */
-CGRect CGRectSetXY(CGRect rect, CGFloat x, CGFloat y) {
+CGRect AKRectSetXY(CGRect rect, CGFloat x, CGFloat y) {
     rect.origin.x = x;
     rect.origin.y = y;
     return rect;
 }
 
 /** Set rect origin */
-CGRect CGRectSetOrigin(CGRect rect, CGPoint origin) {
+CGRect AKRectSetOrigin(CGRect rect, CGPoint origin) {
     rect.origin = origin;
     return rect;
 }
 
 
 /** Set rect width */
-CGRect CGRectSetWidth(CGRect rect, CGFloat width) {
+CGRect AKRectSetWidth(CGRect rect, CGFloat width) {
     rect.size.width = width;
     return rect;
 }
 
 /** Set rect height */
-CGRect CGRectSetHeight(CGRect rect, CGFloat height) {
+CGRect AKRectSetHeight(CGRect rect, CGFloat height) {
     rect.size.height = height;
     return rect;
 }
 
 /** Set rect width and height */
-CGRect CGRectSetWidthHeight(CGRect rect, CGFloat width, CGFloat height) {
+CGRect AKRectSetWidthHeight(CGRect rect, CGFloat width, CGFloat height) {
     rect.size.width = width;
     rect.size.height = height;
     return rect;
 }
 
 /** Set rect size */
-CGRect CGRectSetSize(CGRect rect, CGSize size) {
+CGRect AKRectSetSize(CGRect rect, CGSize size) {
     rect.size = size;
     return rect;
 }
 
 /** Divides and return the remainder rect */
-CGRect CGRectGetRemainder(CGRect rect, int amount, CGRectEdge divider) {
+CGRect AKRectGetRemainder(CGRect rect, int amount, CGRectEdge divider) {
     CGRect slice, remainder;
     CGRectDivide(rect,&slice,&remainder,amount,divider);
     return remainder;
 }
 
 /** Divides and return the slice rect */
-CGRect CGRectGetSlice(CGRect rect, int amount, CGRectEdge divider) {
+CGRect AKRectGetSlice(CGRect rect, int amount, CGRectEdge divider) {
     CGRect slice, remainder;
     CGRectDivide(rect,&slice,&remainder,amount,divider);
     return slice;
 }
 
-CGPoint CGRectGetCenter(CGRect rect) {
+CGPoint AKRectGetCenter(CGRect rect) {
     return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 }
 
 
 /** Set rect origin */
-CGRect CGRectSetCenter(CGRect rect, CGPoint center) {    
+CGRect AKRectSetCenter(CGRect rect, CGPoint center) {
     rect.origin.x = center.x - rect.size.width/2;
     rect.origin.y = center.y -  rect.size.height/ 2;
     return rect;
 }
 
-CGRect CGRectSetMidX(CGRect rect, CGFloat x) {
+CGRect AKRectSetMidX(CGRect rect, CGFloat x) {
     rect.origin.x = x - rect.size.width/2;
     return rect;
 }
 
-CGRect CGRectSetMidY(CGRect rect, CGFloat y) {
+CGRect AKRectSetMidY(CGRect rect, CGFloat y) {
     rect.origin.y = y -  rect.size.height/ 2;
     return rect;
 }
 
-NSArray *CGRectDivide2(CGRect rect, NSArray* amounts, CGRectEdge edge)
+NSArray *AKRectDivide2(CGRect rect, NSArray* amounts, CGRectEdge edge)
 {
     NSMutableArray *result = [NSMutableArray array];
     
@@ -129,7 +129,7 @@ NSArray *CGRectDivide2(CGRect rect, NSArray* amounts, CGRectEdge edge)
     return result;
 }
 
-void AKCGDrawInnerShadow(CGContextRef context, CGRect bounds, CGFloat radious, CGColorRef fillColor, CGSize shadowOffset, CGFloat shadowBlur, CGColorRef shadowColor)
+void AKDrawInnerShadow(CGContextRef context, CGRect bounds, CGFloat radious, CGColorRef fillColor, CGSize shadowOffset, CGFloat shadowBlur, CGColorRef shadowColor)
 {
     CGContextSaveGState(context);
     
