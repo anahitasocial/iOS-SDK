@@ -249,10 +249,10 @@
         ];
     }
     
-    CGRect frame = CGRectSetXY(parentTableView.bounds, 0, 0);
+    CGRect frame = AKRectSetXY(parentTableView.bounds, 0, 0);
     
     _selectorContainer.frame =
-            CGRectOffset((CGRectGetRemainder(frame, CGRectGetHeight(frame) - 300, CGRectMinYEdge)), 0, 300);
+            CGRectOffset((AKRectGetRemainder(frame, CGRectGetHeight(frame) - 300, CGRectMinYEdge)), 0, 300);
     
     CGRect slice,remainder;
     CGRectDivide(_selectorContainer.bounds, &slice, &remainder, 44, CGRectMinYEdge);

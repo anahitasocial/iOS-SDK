@@ -112,17 +112,18 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
 )
 {
     if ( callback )
-    {
-        Class class = class_getImplementingClass([object class], newMethod);
-        
+    {        
+        Class class = [object class];
+        while (!class_conformsToProtocol(class, @protocol(AKViewHookBehavior))) {
+            class = class_getSuperclass(class);
+        }
         AKSwizzleMethodBackForParentClass(class_getSuperclass(class), oldMethod, newMethod, stopClass, nil);
         callback();
         AKSwizzleMethodBackForParentClass(class_getSuperclass(class), oldMethod, newMethod, stopClass, nil);
     }
     else
     {
-        if ( class_selectorInMethodList(object, newMethod) )
-        {
+        if ( class_conformsToProtocol(object, @protocol(AKViewHookBehavior)) ) {
             [object jr_swizzleMethod:oldMethod withMethod:newMethod error:nil];
         }
         if ( object != stopClass && [object isSubclassOfClass:stopClass]) {
@@ -180,6 +181,8 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
         [self exchangeMethod:@selector(UIView_ViewHook_willRemoveSubview:) withClass:class selector:@selector(willRemoveSubview:)];
         [self exchangeMethod:@selector(UIView_ViewHook_willMoveToSuperview:) withClass:class selector:@selector(willMoveToSuperview:)];
         [self exchangeMethod:@selector(UIView_ViewHook_didMoveToSuperview) withClass:class selector:@selector(didMoveToSuperview)];
+    } else {
+        //[self exchangeMethod:@selector(UIView_drawLayer:inContext:) withClass:class selector:@selector(drawLayer:inContext:)];
     }
 }
 
@@ -209,6 +212,12 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
     });
     
     [self postNotificationName:kAKViewDidLayoutSubViewsNotification];
+}
+
+- (void)UIView_drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+{
+    [self UIView_drawLayer:layer inContext:ctx];
+    //NSLog(@"%@", class_getImplementingClass([self class], _cmd));
 }
 
 - (id)UITableView_ViewHook_initWithFrame:(CGRect)frame style:(UITableViewStyle)style
@@ -336,7 +345,7 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
 ADD_BEHAVIOR_TO_CLASS(UIView, AKViewHookBehavior);
 ADD_BEHAVIOR_TO_CLASS(UIView_, AKViewHookBehavior);
 ADD_BEHAVIOR_TO_CLASS(UISearchBar, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UITableViewCell, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UITableViewCell, AKViewHookBehavior);
 ADD_BEHAVIOR_TO_CLASS(UITableView, AKViewHookBehavior);
 ADD_BEHAVIOR_TO_CLASS(UIWebView, AKViewHookBehavior);
 ADD_BEHAVIOR_TO_CLASS(UILabel, AKViewHookBehavior);
