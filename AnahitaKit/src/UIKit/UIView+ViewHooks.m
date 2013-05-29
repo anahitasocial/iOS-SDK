@@ -106,33 +106,28 @@ NSString *const kAKViewDidMoveToSuperViewNotification = @"kAKViewDidMoveToSuperV
 #pragma mark -
 #pragma mark AKViewNotificationBehavior
 
-static inline void AKSwizzleMethodBackForParentClass(id object,
-        SEL oldMethod, SEL newMethod, Class stopClass, void (^callback)()
-
-)
+static inline void AKFixCallToSuper(Class class, SEL oldMethod, SEL newMethod, Class stopClass)
 {
-    if ( callback )
-    {        
-        Class class = [object class];
-        while (!class_conformsToProtocol(class, @protocol(AKViewHookBehavior))) {
-            class = class_getSuperclass(class);
-        }
-        AKSwizzleMethodBackForParentClass(class_getSuperclass(class), oldMethod, newMethod, stopClass, nil);
-        callback();
-        AKSwizzleMethodBackForParentClass(class_getSuperclass(class), oldMethod, newMethod, stopClass, nil);
+    while (!class_conformsToProtocol(class, @protocol(AKViewHookBehavior))) {
+        class = class_getSuperclass(class);
     }
-    else
-    {
-        if ( class_conformsToProtocol(object, @protocol(AKViewHookBehavior)) ) {
-            [object jr_swizzleMethod:oldMethod withMethod:newMethod error:nil];
-        }
-        if ( object != stopClass && [object isSubclassOfClass:stopClass]) {
-            AKSwizzleMethodBackForParentClass([object superclass], oldMethod, newMethod, stopClass, nil);
-        } 
-    }
+    
+    do {
+        class = class_getSuperclass(class);
+        
+        if ( class_conformsToProtocol(class, @protocol(AKViewHookBehavior)) ) {
+            [class jr_swizzleMethod:oldMethod withMethod:newMethod error:nil];
+        }  
+    } while (class && class != stopClass && [class isSubclassOfClass:stopClass]);
+    
 }
 
-
+#define __SUPER__(call) \
+    SEL _new_cmd = NSSelectorFromString([@"UIView_ViewHook_" stringByAppendingString:NSStringFromSelector(_cmd)]);\
+    AKFixCallToSuper([self class],_cmd,_new_cmd,[UIView class]); \
+    [self call]; \
+    AKFixCallToSuper([self class],_cmd,_new_cmd,[UIView class]); \
+    
 @interface AKViewHookBehavior : UIView <AKMixin> @end
 
 @implementation AKViewHookBehavior
@@ -161,11 +156,11 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
 {
     if ( [class isSubclassOfClass:[UITableView class]])
     {
-        [self exchangeMethod:@selector(UITableView_ViewHook_initWithFrame:style:) withClass:class selector:@selector(initWithFrame:style:)];
+        [self exchangeMethod:@selector(UIView_ViewHook_initWithFrame:style:) withClass:class selector:@selector(initWithFrame:style:)];
     }    
     else if ( [class isSubclassOfClass:[UITableViewCell class]])
     {
-        [self exchangeMethod:@selector(UITableViewCell_ViewHook_initWithStyle:reuseIdentifier:) withClass:class selector:@selector(initWithStyle:reuseIdentifier:)];
+        [self exchangeMethod:@selector(UIView_ViewHook_initWithStyle:reuseIdentifier:) withClass:class selector:@selector(initWithStyle:reuseIdentifier:)];
     }
     else
     {
@@ -193,10 +188,7 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
 
 - (id)UIView_ViewHook_initWithFrame:(CGRect)frame
 {
-    AKSwizzleMethodBackForParentClass(self, @selector(initWithFrame:), @selector(UIView_ViewHook_initWithFrame:), [UIView class],^(){
-        [self UIView_ViewHook_initWithFrame:frame];
-    });
-    
+    __SUPER__(UIView_ViewHook_initWithFrame:frame);
     NSDictionary *userInfo = @{@"view":self};
     [[NSNotificationCenter defaultCenter] postNotificationName:kAKViewDidInitNotification object:(id)[self class] userInfo:userInfo];    
     return self;
@@ -206,38 +198,31 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
 {
     [self postNotificationName:kAKViewWillLayoutSubViewsNotification];
     
-    AKSwizzleMethodBackForParentClass(self, @selector(layoutSubviews), @selector(UIView_ViewHook_layoutSubviews), [UIView class], ^{
-
-        [self UIView_ViewHook_layoutSubviews];
-    });
-    
+    __SUPER__(UIView_ViewHook_layoutSubviews);
     [self postNotificationName:kAKViewDidLayoutSubViewsNotification];
 }
 
-- (void)UIView_drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
-{
-    [self UIView_drawLayer:layer inContext:ctx];
-    //NSLog(@"%@", class_getImplementingClass([self class], _cmd));
-}
+//- (void)UIView_drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+//{
+//    [self UIView_drawLayer:layer inContext:ctx];
+//    //NSLog(@"%@", class_getImplementingClass([self class], _cmd));
+//}
 
-- (id)UITableView_ViewHook_initWithFrame:(CGRect)frame style:(UITableViewStyle)style
+- (id)UIView_ViewHook_initWithFrame:(CGRect)frame style:(UITableViewStyle)style
 {
-    AKSwizzleMethodBackForParentClass(self, @selector(initWithFrame:), @selector(UIView_ViewHook_initWithFrame:), [UIView class],^(){
-        [self UITableView_ViewHook_initWithFrame:frame style:style];
-    });
-    
+    AKFixCallToSuper([self class], @selector(initWithFrame:), @selector(UIView_ViewHook_initWithFrame:), [UIView class]);
+    [self UIView_ViewHook_initWithFrame:frame style:style];
+    AKFixCallToSuper([self class], @selector(initWithFrame:), @selector(UIView_ViewHook_initWithFrame:), [UIView class]);
     NSDictionary *userInfo = @{@"view":self};
     [[NSNotificationCenter defaultCenter] postNotificationName:kAKViewDidInitNotification object:(id)[self class] userInfo:userInfo];    
     return self;
 }
 
-- (id)UITableViewCell_ViewHook_initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+- (id)UIView_ViewHook_initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
-    AKSwizzleMethodBackForParentClass(self, @selector(initWithFrame:),
-        @selector(UIView_ViewHook_initWithFrame:), [UIView class],^(){
-        [self UITableViewCell_ViewHook_initWithStyle:style reuseIdentifier:reuseIdentifier];
-    });
-    
+    AKFixCallToSuper([self class], @selector(initWithFrame:), @selector(UIView_ViewHook_initWithFrame:), [UIView class]);
+    [self UIView_ViewHook_initWithStyle:style reuseIdentifier:reuseIdentifier];
+    AKFixCallToSuper([self class], @selector(initWithFrame:), @selector(UIView_ViewHook_initWithFrame:), [UIView class]);
     NSDictionary *userInfo = @{@"view":self};
     [[NSNotificationCenter defaultCenter] postNotificationName:kAKViewDidInitNotification object:(id)[self class] userInfo:userInfo];    
     return self;       
@@ -249,44 +234,35 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
     
     [self postNotificationName:kAKViewWillDrawRectNotification userInfo:userInfo];
     
-    AKSwizzleMethodBackForParentClass(self, @selector(drawRect:), @selector(UIView_ViewHook_drawRect:), [UIView class], ^{
-        
-        [self UIView_ViewHook_drawRect:rect];
-    });
+    __SUPER__(UIView_ViewHook_drawRect:rect);
     
     [self postNotificationName:kAKViewDidDrawRectNotification userInfo:userInfo];
 }
 
 - (void)UIView_ViewHook_didAddSubView:(UIView*)subview
 {
-    AKSwizzleMethodBackForParentClass(self, @selector(didAddSubview:), @selector(UIView_ViewHook_didAddSubView:), [UIView class], ^{
-        [self UIView_ViewHook_didAddSubView:subview];
-        [self postNotificationName:kAKViewDidAddSubViewNotification userInfo:subview ? @{@"view":subview} : nil];
-    });
+    __SUPER__(UIView_ViewHook_didAddSubView:subview);
+    
+    [self postNotificationName:kAKViewDidAddSubViewNotification userInfo:subview ? @{@"view":subview} : nil];
 }
 
 - (void)UIView_ViewHook_willRemoveSubview:(UIView*)subview
 {
-    AKSwizzleMethodBackForParentClass(self, @selector(willRemoveSubview:), @selector(UIView_ViewHook_willRemoveSubview:), [UIView class], ^{
-        [self UIView_ViewHook_willRemoveSubview:subview];
-        [self postNotificationName:kAKViewWillRemoveSubViewNotification userInfo:subview ? @{@"view":subview} : nil];
-    });
+    __SUPER__(UIView_ViewHook_willRemoveSubview:subview);
+    [self postNotificationName:kAKViewWillRemoveSubViewNotification userInfo:subview ? @{@"view":subview} : nil];
 }
 
 - (void)UIView_ViewHook_willMoveToSuperview:(UIView*)superView
 {
-    AKSwizzleMethodBackForParentClass(self, @selector(willMoveToSuperview:), @selector(UIView_ViewHook_willMoveToSuperview:), [UIView class], ^{
-        [self UIView_ViewHook_willMoveToSuperview:superView];
-        [self postNotificationName:kAKViewWillMoveToSuperViewNotification userInfo:superView ? @{@"view":superView} : nil];
-    });
+    __SUPER__(UIView_ViewHook_willMoveToSuperview:superView);
+    [self postNotificationName:kAKViewWillMoveToSuperViewNotification userInfo:superView ? @{@"view":superView} : nil];    
 }
 
 - (void)UIView_ViewHook_didMoveToSuperview
 {
-    AKSwizzleMethodBackForParentClass(self, @selector(didMoveToSuperview), @selector(UIView_ViewHook_didMoveToSuperview), [UIView class], ^{
-        [self UIView_ViewHook_didMoveToSuperview];
-        [self postNotificationName:kAKViewDidMoveToSuperViewNotification];
-    });    
+    __SUPER__(UIView_ViewHook_didMoveToSuperview);
+    
+    [self postNotificationName:kAKViewDidMoveToSuperViewNotification];
 }
 
 - (void)didAddSubview:(UIView *)subview
@@ -326,8 +302,6 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
 
 @end
 
-
-
 @implementation UIView_ @end
 
 @implementation UIView(AKViewUsingBlocks)
@@ -342,19 +316,19 @@ static inline void AKSwizzleMethodBackForParentClass(id object,
 #pragma mark - Overloading existing views
 
 
-ADD_BEHAVIOR_TO_CLASS(UIView, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UIView_, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UISearchBar, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UITableViewCell, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UITableView, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UIWebView, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UILabel, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UINavigationBar, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UIToolbar, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UISegmentedControl, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UIImageView, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UISlider, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UIScrollView, AKViewHookBehavior);
-ADD_BEHAVIOR_TO_CLASS(UIActionSheet, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UIView, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UIView_, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UISearchBar, AKViewHookBehavior);
+////ADD_BEHAVIOR_TO_CLASS(UITableViewCell, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UITableView, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UIWebView, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UILabel, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UINavigationBar, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UIToolbar, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UISegmentedControl, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UIImageView, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UISlider, AKViewHookBehavior);
+////ADD_BEHAVIOR_TO_CLASS(UIScrollView, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UIActionSheet, AKViewHookBehavior);
 
 
