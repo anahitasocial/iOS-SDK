@@ -12,7 +12,11 @@
 
 #define TYPEDEF_CLASS(existing, new) \
     @interface new : existing @end @implementation new @end
-    
+
+
+
+#define inline_block(code) (id)^{code}()
+
 /**
  * For filling in gaps in Apple's Foundation framework.
  *
@@ -67,18 +71,6 @@ Class AKNSClassFromListOfStrings(NSString * class1,...);
  */
 NSArray *AKSubclassesOfClass(Class class);
 
-
-/**
- @method
- 
- @abstract
- A simple block caller that would return an objc object
- 
- @return an objective-c object
- */
-id AKInitBlock(id(^init)());
-
-#define call_block(code) AKInitBlock(^id code)
 
 /**
  @method

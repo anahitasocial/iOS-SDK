@@ -16,7 +16,10 @@
 
 @end
 
+
 @implementation RKAttributeMapping (CoreEntity)
+
+SYNTHESIZE_PROPERTY_COPY(RKPropertyTransformerBlock, setTransformerBlock, getTransformerBlock)
 
 + (instancetype)attributeMappingForKey:(NSString *)key
         usingTransformerBlock:(RKPropertyTransformerBlock)block
@@ -30,16 +33,6 @@
     RKAttributeMapping *mapping = [self attributeMappingFromKeyPath:sourceKeyPath toKeyPath:destinationKeyPath];
     mapping.transformerBlock = block;
     return mapping;
-}
-
-- (void)setTransformerBlock:(RKPropertyTransformerBlock)transformationBlock
-{
-    objc_setAssociatedObject(self, @"transformerBlock", transformationBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
-}
-
-- (RKPropertyTransformerBlock)transformerBlock
-{
-    return objc_getAssociatedObject(self, @"transformerBlock");
 }
 
 - (id)copyWithZone:(NSZone *)zone

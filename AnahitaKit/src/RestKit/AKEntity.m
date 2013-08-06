@@ -7,6 +7,7 @@
 //
 
 #import "AKRestKit.h"
+#import <objc/runtime.h>
 
 static NSMutableDictionary *sharedConfigurations;
 

@@ -19,7 +19,7 @@ static void * const key = (void*)&key; \
 - (void)setter: (type)value { objc_setAssociatedObject(self, THREE_WAY_PASTER(__ASSOCIATED_STORAGE_KEY_, getter,__LINE__) , value, policy); } \
     
 #define SYNTHESIZE_PROPERTY(type, setter, getter, policy) \
-    SYNTHESIZE_PROPERTY_WITH_KEY(type,setter,getter, THREE_WAY_PASTER(__ASSOCIATED_STORAGE_KEY_, getter, __LINE__), OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    SYNTHESIZE_PROPERTY_WITH_KEY(type,setter,getter, THREE_WAY_PASTER(__ASSOCIATED_STORAGE_KEY_, getter, __LINE__), policy)
     
 #define SYNTHESIZE_PROPERTY_STRONG(type,setter,getter) \
     SYNTHESIZE_PROPERTY(type,setter,getter, OBJC_ASSOCIATION_RETAIN_NONATOMIC)

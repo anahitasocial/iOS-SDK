@@ -316,19 +316,19 @@ static inline void AKFixCallToSuper(Class class, SEL oldMethod, SEL newMethod, C
 #pragma mark - Overloading existing views
 
 
-//ADD_BEHAVIOR_TO_CLASS(UIView, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UIView_, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UISearchBar, AKViewHookBehavior);
-////ADD_BEHAVIOR_TO_CLASS(UITableViewCell, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UITableView, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UIWebView, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UILabel, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UINavigationBar, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UIToolbar, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UISegmentedControl, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UIImageView, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UISlider, AKViewHookBehavior);
-////ADD_BEHAVIOR_TO_CLASS(UIScrollView, AKViewHookBehavior);
-//ADD_BEHAVIOR_TO_CLASS(UIActionSheet, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UIView, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UIView_, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UISearchBar, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UITableViewCell, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UITableView, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UIWebView, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UILabel, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UINavigationBar, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UIToolbar, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UISegmentedControl, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UIImageView, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UISlider, AKViewHookBehavior);
+//ADD_BEHAVIOR_TO_CLASS(UIScrollView, AKViewHookBehavior);
+ADD_BEHAVIOR_TO_CLASS(UIActionSheet, AKViewHookBehavior);
 
 

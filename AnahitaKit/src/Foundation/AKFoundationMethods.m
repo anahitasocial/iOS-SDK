@@ -74,11 +74,6 @@ NSArray *AKSubclassesOfClass(Class class)
     return result;
 }
 
-id AKInitBlock(id(^init)()) {
-    return init();
-}
-
-
 BOOL class_selectorInMethodList(Class class, SEL selector) {
     return class_getInstanceMethod(class, selector) != class_getInstanceMethod(class_getSuperclass(class), selector);
 }
