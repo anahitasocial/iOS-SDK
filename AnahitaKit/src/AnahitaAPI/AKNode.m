@@ -6,8 +6,7 @@
 //
 //
 
-#import "AKRestKit.h"
-
+#import "AKAnahitaAPI.h"
 
 @implementation AKNode
 
@@ -39,9 +38,15 @@
 + (void)configureEntity:(AKEntityManager *)configuration
 {
     [super configureEntity:configuration];
-    configuration.pathPatternForGettingCollection = @"people/people";
-    configuration.pathPatternForGettingEntity = @"people/person/:nodeID";
-    [configuration.mappingForResponse addAttributeMappingsFromArray:@[@"name",@"body"]];
+    configuration.pathPatternForGettingCollection = @"people";
+    configuration.pathPatternForGettingEntity = @"people/:nodeID";
+    [configuration.mappingForResponse addAttributeMappingsFromArray:@[@"name",@"body",@"email",@"username"]];
+    [configuration.mappingForRequest addAttributeMappingsFromArray:@[@"password"]];
+    [RKResponseDescriptor responseDescriptorWithMapping:configuration.mappingForResponse
+     method:RKRequestMethodPOST | RKRequestMethodGET pathPattern:@"people/session" keyPath:nil statusCodes:
+        RKStatusCodeIndexSetForClass(RKStatusCodeClassSuccessful)
+     ];
 }
 
 @end
+

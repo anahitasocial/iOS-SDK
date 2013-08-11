@@ -34,12 +34,26 @@ Pod::Spec.new do |s|
 	subspec.dependency 'Anahita/UIKit' 
 	subspec.dependency 'Nimbus/Core'	 
   end
-  
+
+  s.subspec 'AnahitaUI' do |subspec|
+  	subspec.header_dir   = 'AnahitaUI'  
+    subspec.source_files = 'src/AnahitaUI'
+    subspec.dependency 'Anahita/AnahitaAPI'
+    subspec.dependency 'Anahita/CommonUI'   
+    subspec.dependency 'Anahita/Validation' 
+  end
+    
+  s.subspec 'AnahitaAPI' do |subspec|
+  	subspec.header_dir   = 'AnahitaAPI'  
+    subspec.source_files = 'src/AnahitaAPI'
+    subspec.dependency 'Anahita/RestKit'
+  end
+    
   s.subspec 'RestKit' do |subspec|
   	subspec.header_dir   = 'RestKit'  
     subspec.source_files = 'src/RestKit'
     subspec.dependency 'Anahita/CoreSupport'
-	subspec.dependency 'RestKit/Core'
+	subspec.dependency 'RestKit/Core', '0.20.3'
   end
   
   s.subspec 'MapKit' do |subspec|
@@ -58,18 +72,27 @@ Pod::Spec.new do |s|
   
   s.subspec 'Styler' do |subspec|    
   	subspec.header_dir   = 'Styler'
-   	subspec.source_files = 'src/Styler'
-	subspec.dependency 'Nimbus/CSS'  
+   	subspec.source_files = 'src/Styler'  
   end
 
   s.subspec 'CommonUI' do |subspec|
     subspec.header_dir   = 'CommonUI'  
     subspec.source_files = 'src/CommonUI'
-    subspec.dependency 'Anahita/RestKit'
+    subspec.dependency 'Anahita/AnahitaAPI'
     subspec.dependency 'Anahita/Styler'    
     subspec.dependency 'Nimbus/Models'    
     subspec.dependency 'Nimbus/WebController'
     subspec.dependency 'JASidePanels'
+  end  
+  
+  s.subspec 'Validation' do |subspec|
+    subspec.header_dir   = 'Validation'  
+    subspec.source_files = 'src/Validation'    
+  end  
+  
+  s.subspec 'Validation' do |subspec|
+    subspec.header_dir   = 'Validation'  
+    subspec.source_files = 'src/Validation'    
   end  
 
 end

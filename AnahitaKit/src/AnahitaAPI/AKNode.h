@@ -7,6 +7,7 @@
 //
 
 #import "AKEntity.h"
+#import <Foundation/Foundation.h>
 
 @interface AKNode : AKEntity
 
@@ -25,9 +26,21 @@
 @interface AKPerson : AKNode
 
 /** @abstract */
+@property (nonatomic, copy) NSString *email;
+
+/** @abstract */
+@property (nonatomic, copy) NSString *username;
+
+/** @abstract */
+@property (nonatomic, copy) NSString *password;
+
+/** @abstract */
 @property (nonatomic, copy) NSString *name;
 
 /** @abstract */
 @property (nonatomic, copy) NSString *body;
 
 @end
+
+
+

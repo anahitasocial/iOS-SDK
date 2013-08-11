@@ -94,3 +94,10 @@ UIColor *AKColorLighten(UIColor* color, NSUInteger amount);
  @abstract
 */
 UIImage *AKImageFromView(UIView *view);
+
+/**
+ @method
+ 
+ @abstract
+*/
+void AKAlertViewShow(NSString* title, id message, id delegate);

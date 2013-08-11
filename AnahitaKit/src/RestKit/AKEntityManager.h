@@ -46,6 +46,9 @@
 @property (nonatomic, strong) RKObjectMapping *mappingForResponse;
 
 /** @abstract **/
+@property (nonatomic, strong) RKObjectMapping *mappingForRequest;
+
+/** @abstract **/
 @property (nonatomic, strong) RKObjectManager *objectManager;
 
 /** @abstract **/

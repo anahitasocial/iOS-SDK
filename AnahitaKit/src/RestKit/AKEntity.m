@@ -67,10 +67,12 @@ static NSMutableDictionary *sharedConfigurations;
             //add descriptors to the object manager
             [manager.objectManager addResponseDescriptorsFromArray:manager.responseDescriptorsForCollection];
             [manager.objectManager addResponseDescriptorsFromArray:manager.responseDescriptorsForEntity];
+            [manager.objectManager addRequestDescriptor:[RKRequestDescriptor
+            requestDescriptorWithMapping:manager.mappingForRequest objectClass:[self class] rootKeyPath:NULL method:RKRequestMethodAny]];
             
             //add router to the object manager
             [manager.objectManager.router.routeSet
-                addRoute:[RKRoute routeWithClass:self pathPattern:manager.pathPatternForGettingEntity method:RKRequestMethodGET]];
+                addRoute:[RKRoute routeWithClass:self pathPattern:manager.pathPatternForGettingEntity method:RKRequestMethodAny]];
             
             [self setSharedManager:manager];
         }
@@ -79,18 +81,69 @@ static NSMutableDictionary *sharedConfigurations;
     }
 }
 
+- (id)init
+{
+    if ( self = [super init] ) {
+        //per class called the sharedManager once
+        //to instantiate it's configuration
+        [[self class] sharedManager];
+        _loaded = NO;
+    }
+    return self;
+}
+
 #pragma mark -
 #pragma mark - Entity Loading
 
 - (void)load:(void(^)())success failure:(void(^)(NSError *error))failure
 {
-    AKEntityManager *configuration = [[self class] sharedManager];
+    AKEntityManager *configuration = [[self class] sharedManager];   
     
-    [configuration.objectManager getObject:self path:nil parameters:nil success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
+    if ( self.isLoaded )
+    {
+        //if already loaded then don't load
+        dispatch_async(dispatch_get_main_queue(), ^{
+            success();
+        });
+    } else
+    {    
+        [configuration.objectManager getObject:self path:nil parameters:nil success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
+            _loaded = YES;
+            success();
+        } failure:^(RKObjectRequestOperation *operation, NSError *error) {
+            if ( failure != nil )
+                failure(error);
+        }];
+    }
+}
+
+- (void)save:(void(^)())success failure:(void(^)(NSError *error))failure
+{
+    AKEntityManager *configuration = [[self class] sharedManager];
+    [self post:nil success:success failure:failure];
+}
+
+- (void)post:(NSDictionary*)params success:(void(^)())success failure:(void(^)(NSError *error))failure
+{
+    AKEntityManager *configuration = [[self class] sharedManager];
+    [configuration.objectManager postObject:self path:nil parameters:params success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
         success();
     } failure:^(RKObjectRequestOperation *operation, NSError *error) {
-        failure(error);
+        if ( failure != nil )
+            failure(error);
+    }];
+}
+
+- (void)delete:(void(^)())success failure:(void(^)(NSError *error))failure
+{
+    AKEntityManager *configuration = [[self class] sharedManager];
+    [configuration.objectManager deleteObject:self path:nil parameters:nil success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
+        success();
+    } failure:^(RKObjectRequestOperation *operation, NSError *error) {
+        if ( failure != nil )
+            failure(error);
     }];
 }
 
 @end
+

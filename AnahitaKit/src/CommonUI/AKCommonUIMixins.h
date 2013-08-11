@@ -21,6 +21,25 @@ typedef NIFormElement*(^FormElementBlock)(NSInteger elementID);
 
 @optional
 
+/**
+ @method
+
+ @abstract
+*/
+- (void)addFormSpace;
+
+/**
+ @method
+
+ @abstract
+*/
+- (id)addButton:(NSString*)title action:(void(^)())actionBlock;
+
+/**
+ @method
+
+ @abstract
+*/
 - (id)addFormElement:(NSString*)name element:(id<AKFormElement>)element;
 
 /** @abstract */
@@ -36,6 +55,6 @@ typedef NIFormElement*(^FormElementBlock)(NSInteger elementID);
 @property(nonatomic,readonly) UITableView *tableView;
 
 /** @abstract */
-@property(nonatomic,readonly) UITableViewStyle tableViewStyle;
+@property(nonatomic,assign) UITableViewStyle tableViewStyle;
 
 @end

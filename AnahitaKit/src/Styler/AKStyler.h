@@ -6,6 +6,5 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-#import "NimbusCSS.h"
 #import "AKApplicationStyle.h"
 #import "UIView+AKStyler.h"

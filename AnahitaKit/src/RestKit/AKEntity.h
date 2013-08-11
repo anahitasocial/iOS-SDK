@@ -61,16 +61,41 @@
 + (void)objectsWithParameters:(NSDictionary*)parameters success:(void(^)(NSArray *objects))success
     failure:(void(^)(NSError *error))failure;
 
-@end
-
 
 /**
- @class AKEntity(Loading)
+ @method
  
  @abstract
+ 
 */
-@interface AKEntity(Loading)
-
 - (void)load:(void(^)())success failure:(void(^)(NSError *error))failure;
 
+/** @abstract */
+@property(nonatomic,assign,getter=isLoaded) BOOL loaded;
+
+/**
+ @method
+ 
+ @abstract
+ 
+*/
+- (void)save:(void(^)())success failure:(void(^)(NSError *error))failure;
+
+/**
+ @method
+ 
+ @abstract
+ 
+*/
+- (void)post:(NSDictionary*)params success:(void(^)())success failure:(void(^)(NSError *error))failure;
+
+/**
+ @method
+ 
+ @abstract
+ 
+*/
+- (void)delete:(void(^)())success failure:(void(^)(NSError *error))failure;
+
 @end
+

@@ -49,6 +49,14 @@
     return _mappingForResponse;
 }
 
+- (RKObjectMapping*)mappingForRequest
+{
+    if ( !_mappingForRequest ) {
+        _mappingForRequest = [self.mappingForResponse inverseMapping];
+    }    
+    return _mappingForRequest;
+}
+
 - (NSArray*)responseDescriptorsForCollection
 {
     if ( _responseDescriptorsForCollection.count < 1

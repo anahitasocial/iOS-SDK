@@ -8,7 +8,6 @@
 
 #import "AKCommonUI.h"
 #import <objc/runtime.h>
-#import "NimbusCSS.h"
 #import "JRSwizzle.h"
 
 @interface NIFormElement(Private)
@@ -21,6 +20,12 @@
 
 @implementation AKFormViewController
 
+SYNTHESIZE_PROPERTY_STRONG(UITableView*, _setTableView, _tableView);
+SYNTHESIZE_PROPERTY_STRONG(NITableViewActions*, _setTableActions, _tableActions);
+SYNTHESIZE_PROPERTY_STRONG(NIMutableTableViewModel*, _setTableModel, _tableModel);
+SYNTHESIZE_PROPERTY_STRONG(NSNumber*, _setTableViewStyle, _tableViewStyle);
+SYNTHESIZE_PROPERTY_STRONG(NSMutableDictionary*, _setFormElements, _formElements);
+
 + (BOOL)mixinShouldMixWithClass:(Class)class
 {
     return [class isSubclassOfClass:[UIViewController class]];
@@ -28,8 +33,16 @@
 
 + (void)mixinDidMixSelectors:(NSMutableArray *)selectors withClass:(Class)class
 {
-    class_copyMethod(self, @selector(formElements), class, @selector(formElements));
-    class_copyMethod(self, @selector(AKFormViewController_loadView), class, @selector(AKFormViewController_loadView));
+    class_copyMethods(self, class,
+            @selector(formElements),
+            @selector(AKFormViewController_loadView),
+            @selector(_setTableView:),    @selector(_tableView),
+            @selector(_setTableModel:),   @selector(_tableModel),
+            @selector(_setTableViewStyle:),   @selector(_tableViewStyle),
+            @selector(_setTableActions:), @selector(_tableActions),
+            @selector(_setFormElements:), @selector(_formElements)
+    );
+    
     [class jr_swizzleMethod:@selector(loadView) withMethod:@selector(AKFormViewController_loadView) error:nil];
 }
 
@@ -41,24 +54,41 @@
 
 - (NITableViewActions*)tableActions
 {
-    NITableViewActions *tableActions = objc_getAssociatedObject(self, @"tableActions");
+    NITableViewActions *tableActions = [self _tableActions];
     if ( !tableActions ) {
         tableActions = [[NITableViewActions alloc] initWithTarget:self];
         [self tableView].delegate = [tableActions forwardingTo:(id<UITableViewDelegate>)self];
-        objc_setAssociatedObject(self, @"tableActions", tableActions, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        [self _setTableActions:tableActions];
     }
     return tableActions;
 }
 
 - (NIMutableTableViewModel*)tableModel
 {
-    NIMutableTableViewModel *tableModel = objc_getAssociatedObject(self, @"tableModel");
+    NIMutableTableViewModel *tableModel = [self _tableModel];
     if ( !tableModel ) {
         tableModel = [[NIMutableTableViewModel alloc] initWithDelegate:(id)[NICellFactory class]];
         [self tableView].dataSource = tableModel;
-        objc_setAssociatedObject(self, @"tableModel", tableModel, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        [self _setTableModel:tableModel];
     }
     return tableModel;
+}
+
+- (void)addFormSpace
+{
+    [[self tableModel] addSectionWithTitle:@""];
+}
+
+
+- (id)addButton:(NSString*)title action:(void(^)())actionBlock
+{
+    NITitleCellObject *cellObject = [NITitleCellObject objectWithTitle:title];
+    [[self tableModel] addObject:cellObject];
+    [[self tableActions] attachToObject:cellObject tapBlock:^BOOL(id object, id target) {
+        actionBlock();
+        return YES;
+    }];
+    return cellObject;
 }
 
 - (id)addFormElement:(NSString*)name element:(id<AKFormElement>)element
@@ -69,19 +99,28 @@
     return element;
 }
 
+- (void)setTableViewStyle:(UITableViewStyle)tableViewStyle
+{
+    [self _setTableViewStyle:[NSNumber numberWithInt:tableViewStyle]];
+}
+
 - (UITableViewStyle)tableViewStyle
 {
-    return UITableViewStyleGrouped;
+    NSNumber *tableViewStyle = [self _tableViewStyle];
+    if ( !tableViewStyle ) {
+        return UITableViewStyleGrouped;
+    }
+    return [tableViewStyle intValue];
 }
 
 - (UITableView*)tableView
 {
-    UITableView *tableView = objc_getAssociatedObject(self, @"tableView");
+    UITableView *tableView = [self _tableView];
     if ( !tableView ) {
         MIXER_VAR(UIViewController*);
         UITableViewStyle tableViewStyle = [self tableViewStyle];
         tableView = [[UITableView alloc] initWithFrame:CGRectZero style:tableViewStyle];
-        objc_setAssociatedObject(self, @"tableView", tableView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        [self _setTableView:tableView];
         [mixer.view addSubview:tableView];
         //nothign has changed
         if ( CGRectEqualToRect(tableView.frame,CGRectZero) ) {
@@ -117,10 +156,10 @@
 
 - (NSMutableDictionary*)formElements
 {
-    NSMutableDictionary *formElements = objc_getAssociatedObject(self, @"formElements");
+    NSMutableDictionary *formElements = [self _formElements];
     if ( !formElements ) {
         formElements = [NSMutableDictionary dictionary];
-        objc_setAssociatedObject(self, @"formElements", formElements, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        [self _setFormElements:formElements];
     }
     return formElements;
 }

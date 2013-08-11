@@ -67,3 +67,14 @@ UIImage *AKImageFromView(UIView *view)
     UIGraphicsEndImageContext();
     return viewImage;
 }
+
+void AKAlertViewShow(NSString* title, id message,id delegate)
+{
+    dispatch_async(dispatch_get_main_queue()
+    , ^{
+        NSArray *messages = [message isKindOfClass:[NSArray class]] ? message : @[message];
+        NSString *msg     = [messages componentsJoinedByString:@"\n"];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:msg delegate:delegate cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        [alert show];
+    });
+}

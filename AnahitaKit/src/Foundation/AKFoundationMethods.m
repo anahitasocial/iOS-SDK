@@ -10,6 +10,20 @@
 
 #pragma mark -
 
+NSString * AKLocalizedString(NSBundle *bundle, NSString *key, NSString *comment)
+{
+    // default localized string loading
+    NSString * localizedString = [bundle localizedStringForKey:key value:key table:nil];
+
+    // if (value == key) and comment is not nil -> returns comment
+    if([localizedString isEqualToString:key] && comment !=nil)
+        return comment;
+
+    return localizedString;
+}
+
+#pragma mark -
+
 NSString* AKNSRegularExpressionReplace(NSString *string, NSString *pattern, NSString *replacement, NSError **error)
 {
     NSMutableString *mutableString = [NSMutableString stringWithString:string];
@@ -103,6 +117,16 @@ BOOL class_copyMethod(Class sourceClass, SEL sourceSelector, Class targetClass, 
         copied = class_addMethod(targetClass, targetSelector, methodImp, encoding);        
     }
     return copied;
+}
+
+BOOL class_copyMethods(Class sourceClass, Class targetClass, SEL method1, ...)
+{
+    va_list args;
+    va_start(args, method1);
+    for(SEL arg = method1; arg != nil; arg=va_arg(args, SEL)) {
+        class_copyMethod(sourceClass, arg, targetClass, arg);
+    }
+    va_end(args);
 }
 
 NSArray *class_getMethodList(Class class) {

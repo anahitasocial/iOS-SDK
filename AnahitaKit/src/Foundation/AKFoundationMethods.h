@@ -25,6 +25,19 @@
  */
 
 #pragma mark -
+
+/**
+ @method
+  
+ @abstract
+ */
+NSString * AKLocalizedString(NSBundle *bundle, NSString *key, NSString *comment);
+
+#undef NSLocalizedString
+#define NSLocalizedString(key,_comment) AKLocalizedString([NSBundle mainBundle], key, _comment)
+
+
+#pragma mark -
 #pragma mark NSRegularExpression Methods
 
 /**
@@ -95,6 +108,14 @@ BOOL class_selectorInMethodList(Class class, SEL selector);
 
  */
 BOOL class_copyMethod(Class sourceClass, SEL sourceSelector, Class targetClass, SEL targetSelector);
+
+/**
+ @method
+ 
+ @abstract
+
+ */
+BOOL class_copyMethods(Class sourceClass, Class targetClass, SEL method1, ...);
 
 /**
  @method
