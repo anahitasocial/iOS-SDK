@@ -87,6 +87,7 @@ static NSMutableDictionary *sharedConfigurations;
         //per class called the sharedManager once
         //to instantiate it's configuration
         [[self class] sharedManager];
+        _params = [NSMutableDictionary new];
         _loaded = NO;
     }
     return self;
@@ -120,13 +121,7 @@ static NSMutableDictionary *sharedConfigurations;
 - (void)save:(void(^)())success failure:(void(^)(NSError *error))failure
 {
     AKEntityManager *configuration = [[self class] sharedManager];
-    [self post:nil success:success failure:failure];
-}
-
-- (void)post:(NSDictionary*)params success:(void(^)())success failure:(void(^)(NSError *error))failure
-{
-    AKEntityManager *configuration = [[self class] sharedManager];
-    [configuration.objectManager postObject:self path:nil parameters:params success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
+    [configuration.objectManager postObject:self path:nil parameters:_params success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
         success();
     } failure:^(RKObjectRequestOperation *operation, NSError *error) {
         if ( failure != nil )
@@ -143,6 +138,16 @@ static NSMutableDictionary *sharedConfigurations;
         if ( failure != nil )
             failure(error);
     }];
+}
+
+#pragma mark 
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key
+{
+    if ( value == NULL )
+        value = [NSNull null];
+    
+    [_params setValue:value forKey:key];
 }
 
 @end

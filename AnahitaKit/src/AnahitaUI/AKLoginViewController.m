@@ -22,7 +22,7 @@
             placeholderText:NSLocalizedString(@"PASSWORD-LABEL", @"Password") value:@""]];
     [self addFormSpace];
     id weakSelf = self;
-    [self addButton:NSLocalizedString(@"LOGIN-BUTTON", @"Login") action:^{
+    [[self addButton:NSLocalizedString(@"LOGIN-BUTTON", @"Login") action:^{
         NSDictionary *params = [weakSelf formValues];
         [[AKSession sessionWithCredential:params] login:nil failure:^(NSError *error) {
             AKAlertViewShow(
@@ -31,7 +31,51 @@
                 nil
             );
         }];
-    }];
+    }]
+    addStyleTag:@"LoginButton"];
+    [self addFormSpace];
+    if ( FBSession.activeSession != nil )
+    {
+        [[self addButton:NSLocalizedString(@"FB-LOGIN-BUTTON", @"Login with Facebook") action:^{
+            [FBSession.activeSession openWithCompletionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
+                if ( status & FBSessionStateOpen )
+                {
+                    AKOAuthSessionCredential *credential = [AKOAuthSessionCredential
+                        credentialWithToken:session.accessTokenData.accessToken
+                        secret:nil
+                        serivce:kAKFacebookServiceType];
+                    
+                    [[AKSession sessionWithCredential:credential] login:nil failure:^(NSError *error) {
+                        //need to signup
+                         NIDPRINT(@"FB Auth passed. No user account need to create Anahita account");
+                    }];
+                }
+                
+            }];
+        }]
+        addStyleTag:@"FBLoginButton"];        
+        ;
+    }
+    
+    if ( [AKServiceConfiguration sharedConiguration].twitterConsumer != nil ) {
+        [[self addButton:NSLocalizedString(@"TW-LOGIN-BUTTON", @"Login with Twitter") action:^{
+            [SHOmniAuthTwitter performLoginWithListOfAccounts:^(NSArray *accounts, SHOmniAuthAccountPickerHandler pickAccountBlock) {
+                    pickAccountBlock([accounts objectAtIndex:0]);
+            } onComplete:^(id<account> account, id response, NSError *error, BOOL isSuccess) {
+
+                    AKOAuthSessionCredential *credential = [AKOAuthSessionCredential credentialWithToken:[response valueForKeyPath:@"auth.credentials.token"]
+                        secret:[response valueForKeyPath:@"auth.credentials.secret"]
+                        serivce:kAKTwitterServiceType];
+
+                    [[AKSession sessionWithCredential:credential] login:nil failure:^(NSError *error) {
+                         //need to signup
+                         NIDPRINT(@"TW Auth passed. No user account need to create Anahita account");
+                    }];
+            }];
+        }]
+        addStyleTag:@"TWLoginButton"];        
+        ;    
+    }
     
     [super viewDidLoad];
 	// Do any additional setup after loading the view.

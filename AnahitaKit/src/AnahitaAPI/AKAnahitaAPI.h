@@ -7,6 +7,7 @@
 //
 
 #import "AKRestKit.h"
+#import "AKServiceConfiguration.h"
 #import "AKAnahitaAPIMethods.h"
 #import "AKNode.h"
 #import "AKSession.h"

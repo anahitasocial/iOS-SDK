@@ -91,17 +91,24 @@ NSString *const kAKSessionViewerNotificationKey = @"kAKSessionViewerNotification
 {
     id<AKSessionCredential> credential = self.credential;
     AKPerson *viewer = [AKPerson new];
-    [[RKObjectManager sharedManager] postObject:viewer path:@"people/session" parameters:[credential toParameters] success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
-         NIDINFO(@"Succesful logging with %@", [credential toParameters]);
-         NIDINFO(@"Welcome %@", viewer.name);
+    void (^httpSuccess)(RKObjectRequestOperation*, RKMappingResult *)  = ^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
+        NIDINFO(@"Welcome %@", viewer.name);
         self.viewer = viewer;        
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKSessionDidLogin object:self userInfo:@{kAKSessionViewerNotificationKey:self.viewer}];
         if ( success ) success(viewer);
-    } failure:^(RKObjectRequestOperation *operation, NSError *error) { 
-         NIDINFO(@"Failed logging with %@", [credential toParameters] );
+    };
+    void (^httpFailure)(RKObjectRequestOperation*, NSError *)  = ^(RKObjectRequestOperation *operation, NSError *error) {
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKSessionDidFailLogin object:self userInfo:nil];
         if ( failure ) failure(error);
-    }];
+    };
+    if ( nil == credential ) {
+        [[RKObjectManager sharedManager] getObject:viewer path:@"people/session" parameters:nil
+            success:httpSuccess failure:httpFailure];    
+    } else {
+        [[RKObjectManager sharedManager] postObject:viewer path:@"people/session" parameters:[credential toParameters]
+            success:httpSuccess failure:httpFailure];
+    }
+
 }
 
 - (void)login

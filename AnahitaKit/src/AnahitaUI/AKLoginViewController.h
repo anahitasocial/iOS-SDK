@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "AKAnahitaUI.h"
 
+@class FBSession;
 @class AKSession;
 
 /**

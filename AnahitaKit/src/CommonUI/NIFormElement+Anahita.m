@@ -15,7 +15,7 @@
 
 @implementation NICellFactory(SwizzleCellFactoryMethod)
 
-+ (UITableViewCell *)___cellWithClass:(Class)cellClass
++ (UITableViewCell *)SwizzleCellFactoryMethod_cellWithClass:(Class)cellClass
                          tableView:(UITableView *)tableView
                             object:(id)object
 {
@@ -52,12 +52,28 @@
 __attribute__((constructor))
 void NIFormElement_Anahita_Initialize()
 {
-    [NICellFactory jr_swizzleClassMethod:@selector(cellWithClass:tableView:object:) withClassMethod:@selector(___cellWithClass:tableView:object:) error:nil];
+    [NICellFactory jr_swizzleClassMethod:@selector(cellWithClass:tableView:object:)
+        withClassMethod:@selector(SwizzleCellFactoryMethod_cellWithClass:tableView:object:) error:nil];
 }
 
 @implementation NICellObject(StylerTag)
 
-SYNTHESIZE_PROPERTY_STRONG(NSArray*, setStyleTags, styleTags);
+SYNTHESIZE_PROPERTY(NSMutableArray*, setStyleTags, styleTags, OBJC_ASSOCIATION_RETAIN_NONATOMIC,[NSMutableArray array]);
+
+- (void)addStyleTags:(NSString *)tag1, ...
+{
+    va_list args;
+    va_start(args, tag1);
+    for(NSString* arg = tag1; arg != nil; arg=va_arg(args, NSString*)) {
+        [self addStyleTag:arg];
+    }
+    va_end(args);
+}
+
+- (void)addStyleTag:(NSString *)tag
+{
+    [(NSMutableArray*)[self styleTags] addObject:tag];
+}
 
 @end
 

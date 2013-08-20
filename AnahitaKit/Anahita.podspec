@@ -34,15 +34,24 @@ Pod::Spec.new do |s|
 	subspec.dependency 'Anahita/UIKit' 
 	subspec.dependency 'Nimbus/Core'	 
   end
-
+  
   s.subspec 'AnahitaUI' do |subspec|
   	subspec.header_dir   = 'AnahitaUI'  
     subspec.source_files = 'src/AnahitaUI'
     subspec.dependency 'Anahita/AnahitaAPI'
-    subspec.dependency 'Anahita/CommonUI'   
-    subspec.dependency 'Anahita/Validation' 
+    subspec.dependency 'Anahita/CommonUI'
+    subspec.dependency 'Anahita/Connect'       
   end
     
+  s.subspec 'Connect' do |subspec|    
+  	subspec.header_dir   = 'Connect'  
+    subspec.source_files = 'src/Connect'  
+    subspec.dependency 'Anahita/AnahitaAPI'
+    subspec.dependency 'Anahita/CommonUI' 	
+    subspec.dependency 'Facebook-iOS-SDK', '~> 3.6.0' 
+    subspec.dependency 'SHOmniAuthTwitter', '~> 0.2.9'
+  end
+      
   s.subspec 'AnahitaAPI' do |subspec|
   	subspec.header_dir   = 'AnahitaAPI'  
     subspec.source_files = 'src/AnahitaAPI'

@@ -36,7 +36,21 @@
 @interface NICellObject(StylerTag)
 
 /** @abstract */
-@property (nonatomic, strong) NSArray *styleTags;
+@property (nonatomic, readonly) NSArray *styleTags;
+
+/** 
+  @method
+
+  @abstract
+*/
+- (void)addStyleTags:(NSString*)tag1,...;
+
+/** 
+  @method
+
+  @abstract
+*/
+- (void)addStyleTag:(NSString*)tag;
 
 @end
 

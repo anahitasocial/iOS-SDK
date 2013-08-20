@@ -19,6 +19,9 @@
  @abstract
 */
 @interface AKEntity : NSObject
+{
+    NSMutableDictionary *_params;
+}
 
 /**
  @method

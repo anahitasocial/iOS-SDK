@@ -23,8 +23,8 @@
 SYNTHESIZE_PROPERTY_STRONG(UITableView*, _setTableView, _tableView);
 SYNTHESIZE_PROPERTY_STRONG(NITableViewActions*, _setTableActions, _tableActions);
 SYNTHESIZE_PROPERTY_STRONG(NIMutableTableViewModel*, _setTableModel, _tableModel);
-SYNTHESIZE_PROPERTY_STRONG(NSNumber*, _setTableViewStyle, _tableViewStyle);
-SYNTHESIZE_PROPERTY_STRONG(NSMutableDictionary*, _setFormElements, _formElements);
+SYNTHESIZE_PROPERTY(NSNumber*, _setTableViewStyle, _tableViewStyle, OBJC_ASSOCIATION_RETAIN_NONATOMIC, [NSNumber numberWithInt:UITableViewStyleGrouped]);
+SYNTHESIZE_PROPERTY(NSMutableDictionary*, _setFormElements, _formElements, OBJC_ASSOCIATION_RETAIN_NONATOMIC, [NSMutableDictionary dictionary]);
 
 + (BOOL)mixinShouldMixWithClass:(Class)class
 {
@@ -34,13 +34,12 @@ SYNTHESIZE_PROPERTY_STRONG(NSMutableDictionary*, _setFormElements, _formElements
 + (void)mixinDidMixSelectors:(NSMutableArray *)selectors withClass:(Class)class
 {
     class_copyMethods(self, class,
-            @selector(formElements),
             @selector(AKFormViewController_loadView),
             @selector(_setTableView:),    @selector(_tableView),
             @selector(_setTableModel:),   @selector(_tableModel),
             @selector(_setTableViewStyle:),   @selector(_tableViewStyle),
             @selector(_setTableActions:), @selector(_tableActions),
-            @selector(_setFormElements:), @selector(_formElements)
+            @selector(_setFormElements:), @selector(_formElements),nil
     );
     
     [class jr_swizzleMethod:@selector(loadView) withMethod:@selector(AKFormViewController_loadView) error:nil];
@@ -80,7 +79,7 @@ SYNTHESIZE_PROPERTY_STRONG(NSMutableDictionary*, _setFormElements, _formElements
 }
 
 
-- (id)addButton:(NSString*)title action:(void(^)())actionBlock
+- (id<NICellObject>)addButton:(NSString*)title action:(void(^)())actionBlock
 {
     NITitleCellObject *cellObject = [NITitleCellObject objectWithTitle:title];
     [[self tableModel] addObject:cellObject];
@@ -93,7 +92,7 @@ SYNTHESIZE_PROPERTY_STRONG(NSMutableDictionary*, _setFormElements, _formElements
 
 - (id)addFormElement:(NSString*)name element:(id<AKFormElement>)element
 {
-    NSMutableDictionary *formElements = [self formElements];
+    NSMutableDictionary *formElements = [self _formElements];
     [formElements setValue:element forKey:name];
     [[self tableModel] addObject:element];
     return element;
@@ -106,11 +105,7 @@ SYNTHESIZE_PROPERTY_STRONG(NSMutableDictionary*, _setFormElements, _formElements
 
 - (UITableViewStyle)tableViewStyle
 {
-    NSNumber *tableViewStyle = [self _tableViewStyle];
-    if ( !tableViewStyle ) {
-        return UITableViewStyleGrouped;
-    }
-    return [tableViewStyle intValue];
+    return [[self _tableViewStyle] intValue];
 }
 
 - (UITableView*)tableView
@@ -133,7 +128,7 @@ SYNTHESIZE_PROPERTY_STRONG(NSMutableDictionary*, _setFormElements, _formElements
 
 - (NSDictionary*)formValues
 {
-    NSDictionary *values = [[self formElements] dictionaryByMappingObjectsUsingBlock:^id(id key, id<AKFormElement>obj) {
+    NSDictionary *values = [[self _formElements] dictionaryByMappingObjectsUsingBlock:^id(id key, id<AKFormElement>obj) {
         if ( [obj respondsToSelector:@selector(elementValue)] ) {
             id value = [obj elementValue];
             SEL attributeSelector = NSSelectorFromString([NSString stringWithFormat:@"%@Value:", key]);
@@ -152,16 +147,6 @@ SYNTHESIZE_PROPERTY_STRONG(NSMutableDictionary*, _setFormElements, _formElements
     return [values dictionaryByReducingObjectsUsingBlock:^BOOL(id key, id obj) {
         return ![obj isKindOfClass:[NSNull class]];
     }];
-}
-
-- (NSMutableDictionary*)formElements
-{
-    NSMutableDictionary *formElements = [self _formElements];
-    if ( !formElements ) {
-        formElements = [NSMutableDictionary dictionary];
-        [self _setFormElements:formElements];
-    }
-    return formElements;
 }
 
 @end

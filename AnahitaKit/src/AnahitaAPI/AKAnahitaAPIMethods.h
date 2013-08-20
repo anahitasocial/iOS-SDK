@@ -8,11 +8,3 @@
 
 #import <Foundation/Foundation.h>
 
-@class  RKObjectManager;
-
-/**
- @method
- 
- @abstract
-*/
-RKObjectManager* AKInitObjectManagerForAnahitaService(NSURL* serviceURL);

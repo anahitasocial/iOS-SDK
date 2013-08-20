@@ -54,6 +54,16 @@ SYNTHESIZE_PROPERTY_STRONG(NSMutableSet*, _styleTags, _styleTags)
     }
 }
 
+- (void)addStyleTags:(NSString *)tag1, ...
+{
+    va_list args;
+    va_start(args, tag1);
+    for(NSString* styleTag = tag1; styleTag != nil; styleTag=va_arg(args, NSString*)) {
+        [self addStyleTag:styleTag];
+    }
+    va_end(args);
+}
+
 - (BOOL)hasStyleTag:(NSString*)styleTag
 {
     return [self.styleTags containsObject:styleTag];

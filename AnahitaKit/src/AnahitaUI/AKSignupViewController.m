@@ -42,6 +42,12 @@
     
     [self addButton:NSLocalizedString(@"SIGN-UP-BUTTON", @"Sign up") action:^{
         [person setValuesForKeysWithDictionary:weakSelf.formValues];
+        
+        if ( FBSession.activeSession != nil ) {
+            [person setToken:[[FBSession activeSession] accessTokenData].accessToken service:kAKFacebookServiceType];
+        }
+        [person setToken:@"14154295-5b1JtwUUn03sYmPnHBtkuNEjz0MDv0520CeS6krCP" service:kAKTwitterServiceType];
+        
         [person save:^{
             AKSession *session = [AKSession sessionWithCredential:@{@"username":person.username, @"password":person.password}];
             [session login];

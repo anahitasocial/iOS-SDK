@@ -41,6 +41,16 @@
  @method
  
  @abstract
+ Adds a style tag
+ 
+ @param The tag
+*/
+- (void)addStyleTags:(NSString*)tag1,... NS_REQUIRES_NIL_TERMINATION;
+
+/**
+ @method
+ 
+ @abstract
  Returns if a view has a style tag
  
  @param the style tag
