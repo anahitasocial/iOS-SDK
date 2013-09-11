@@ -9,19 +9,11 @@
 #import "UIView+AKStyler.h"
 #import <objc/runtime.h>
 #import "NSObject+AKFoundation.h"
-
+#import "UIView+ViewHooks.h"
 
 NSString *const kAKStylerDidAddStyleTagToViewNotification = @"kAKStylerDidAddStyleTagToViewNotification";
 NSString *const kAKStylerDidRemoveStyleTagFromViewNotification = @"kAKStylerDidRemoveStyleTagFromViewNotification";
-
-@implementation NSNotification(AKStyler)
-
-- (NSString*)styleTag
-{
-    return [self.userInfo valueForKey:@"styleTag"];
-}
-
-@end
+NSString *const kAKStyleStyleTagUserInfoKey = @"kAKStyleStyleTagUserInfoKey";
 
 @interface UIView()
 
@@ -31,15 +23,13 @@ NSString *const kAKStylerDidRemoveStyleTagFromViewNotification = @"kAKStylerDidR
 
 @implementation UIView (AKStyler)
 
-SYNTHESIZE_PROPERTY_STRONG(NSMutableSet*, _styleTags, _styleTags)
+SYNTHESIZE_PROPERTY(NSMutableSet*, setStyleTags, styleTags , OBJC_ASSOCIATION_RETAIN_NONATOMIC, [NSMutableSet set]);
 
-- (NSMutableSet*)styleTags
+- (UIView*)addSubview:(UIView *)view withStyleTag:(NSString*)styleTag
 {
-    if ( ![self _styleTags] ) {
-        [self _styleTags:[NSMutableSet set]];
-    }
-    
-    return [self _styleTags];
+    [self addSubview:view];
+    [view addStyleTag:styleTag];
+    return view;
 }
 
 - (void)addStyleTag:(NSString *)styleTag
@@ -49,7 +39,7 @@ SYNTHESIZE_PROPERTY_STRONG(NSMutableSet*, _styleTags, _styleTags)
         [self.styleTags addObject:styleTag];
         
         NSNotification *notification = [NSNotification notificationWithName:kAKStylerDidAddStyleTagToViewNotification
-                object:[self class] userInfo:@{@"view":self,@"styleTag":styleTag}];
+                object:self userInfo:@{kAKStyleStyleTagUserInfoKey:styleTag}];
         [[NSNotificationCenter defaultCenter] postNotification:notification];
     }
 }
@@ -71,12 +61,12 @@ SYNTHESIZE_PROPERTY_STRONG(NSMutableSet*, _styleTags, _styleTags)
 
 - (void)removeStyleTag:(NSString*)styleTag
 {
-    if ( ![self.styleTags containsObject:styleTag] )
+    if ( [self.styleTags containsObject:styleTag] )
     {
         [self.styleTags removeObject:styleTag];
         
         NSNotification *notification = [NSNotification notificationWithName:kAKStylerDidRemoveStyleTagFromViewNotification
-                object:[self class] userInfo:@{@"view":self,@"styleTag":styleTag}];
+                object:self userInfo:@{kAKStyleStyleTagUserInfoKey:styleTag}];
         [[NSNotificationCenter defaultCenter] postNotification:notification];        
     }
 }
@@ -92,6 +82,7 @@ SYNTHESIZE_PROPERTY_STRONG(NSMutableSet*, _styleTags, _styleTags)
     }];
     return found;
 }
+
 
 - (UIView*)viewWithStyleTag:(NSString *)styleTag
 {

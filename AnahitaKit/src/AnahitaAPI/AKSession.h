@@ -55,15 +55,6 @@
  Logs in the username and password. Store the session
  posts a notification for the below scenarios
 */
-- (id)initWithCredential:(id<AKSessionCredential>)credential;
-
-/**
- @method 
- 
- @abstract
- Logs in the username and password. Store the session
- posts a notification for the below scenarios
-*/
 - (void)login:(void(^)(AKPerson *viewer))success failure:(void(^)(NSError *error))failure;
 
 /**

@@ -10,22 +10,20 @@
  @category
  
  @abstract
- Provides a readonly propery to get a style tag
-*/
-@interface NSNotification(AKStyler)
-
-@property(nonatomic,readonly) NSString* styleTag;
-
-@end
-
-/**
- @category
- 
- @abstract
  Provides a mechanism to store styler tags for a view. When a css class for view is set
  a notification is dispatched that allows observers to style the view
 */
 @interface UIView (AKStyler)
+
+/**
+ @method
+ 
+ @abstract
+ Adds a style tag
+ 
+ @param The tag
+*/
+- (UIView*)addSubview:(UIView *)view withStyleTag:(NSString*)styleTag;
 
 /**
  @method
@@ -89,6 +87,11 @@
 - (UIView*)viewWithStyleTag:(NSString*)styleTag;
 
 @end
+
+/**
+ @abstract Style tag user info key
+*/
+extern NSString *const kAKStyleStyleTagUserInfoKey;
 
 /**
  @abstract Dispatched when a css class is added to the view

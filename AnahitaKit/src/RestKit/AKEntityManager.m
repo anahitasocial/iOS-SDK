@@ -8,6 +8,13 @@
 
 #import "AKRestKit.h"
 
+NSString *const kAKEntityWillLoadNotification = @"kAKEntityWillLoadNotification";
+NSString *const kAKEntityDidLoadNotification = @"kAKEntityDidLoadNotification";
+NSString *const kAKEntityWillSaveNotification = @"kAKEntityWillSaveNotification";
+NSString *const kAKEntityDidSaveNotification = @"kAKEntityDidSaveNotification";
+NSString *const kAKEntityWillDeleteNotification = @"kAKEntityWillDeleteNotification";
+NSString *const kAKEntityDidDeleteNotification  = @"kAKEntityDidDeleteNotification";
+
 @implementation AKEntityManager
 
 - (id)initForClass:(Class)entityClass
@@ -52,7 +59,7 @@
 - (RKObjectMapping*)mappingForRequest
 {
     if ( !_mappingForRequest ) {
-        _mappingForRequest = [self.mappingForResponse inverseMapping];
+        _mappingForRequest = [RKObjectMapping mappingForClass:[NSMutableDictionary class]];
     }    
     return _mappingForRequest;
 }

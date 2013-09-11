@@ -18,7 +18,7 @@
 {
     [super viewDidLoad];
     int r = arc4random() % 1000;
-    AKPerson *person = [AKPerson new];
+    AKPerson *person = [AKSession sharedSession].viewer;
     person.name     = [NSString stringWithFormat:@"arash%d", r];
     person.username = [NSString stringWithFormat:@"arash%d", r];
     person.email = [NSString stringWithFormat:@"arash%d@example.com", r];
@@ -38,15 +38,12 @@
 
     [self addFormSpace];
     
-    AKSignupViewController *weakSelf = self;
-    
-    [self addButton:NSLocalizedString(@"SIGN-UP-BUTTON", @"Sign up") action:^{
-        [person setValuesForKeysWithDictionary:weakSelf.formValues];
+    __weak__(self);
+    [self addButton:NSLocalizedString(@"SIGN-UP-BUTTON", @"Sign Up") action:^{
+        [person setValuesForKeysWithDictionary:weakself.formValues];
         
-        if ( FBSession.activeSession != nil ) {
-            [person setToken:[[FBSession activeSession] accessTokenData].accessToken service:kAKFacebookServiceType];
-        }
-        [person setToken:@"14154295-5b1JtwUUn03sYmPnHBtkuNEjz0MDv0520CeS6krCP" service:kAKTwitterServiceType];
+        //somehowe we need to get the last oauth credential
+        //to pass to person::save
         
         [person save:^{
             AKSession *session = [AKSession sessionWithCredential:@{@"username":person.username, @"password":person.password}];
@@ -61,7 +58,8 @@
             }
             AKAlertViewShow(nil, msgs, nil);
         }];
-    }];    
+    }];
+    [self.tableView addStyleTag:@"SignupTableView"];
 }
 
 - (void)signup

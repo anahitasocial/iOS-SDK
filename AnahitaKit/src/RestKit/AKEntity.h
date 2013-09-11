@@ -76,6 +76,12 @@
 /** @abstract */
 @property(nonatomic,assign,getter=isLoaded) BOOL loaded;
 
+/** @abstract */
+@property(nonatomic,readonly) NSString* resourcePath;
+
+/** @abstract */
+@property(nonatomic,readonly) RKObjectManager *objectManager;
+
 /**
  @method
  
@@ -90,7 +96,7 @@
  @abstract
  
 */
-- (void)post:(NSDictionary*)params success:(void(^)())success failure:(void(^)(NSError *error))failure;
+- (void)post:(NSDictionary*)parameters success:(void(^)())success failure:(void(^)(NSError *error))failure;
 
 /**
  @method

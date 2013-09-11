@@ -33,7 +33,7 @@ typedef NIFormElement*(^FormElementBlock)(NSInteger elementID);
 
  @abstract
 */
-- (id)addButton:(NSString*)title action:(void(^)())actionBlock;
+- (NICellObject*)addButton:(NSString*)title action:(void(^)())actionBlock;
 
 /**
  @method

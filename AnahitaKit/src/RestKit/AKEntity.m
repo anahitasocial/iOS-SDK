@@ -8,6 +8,7 @@
 
 #import "AKRestKit.h"
 #import <objc/runtime.h>
+#import "SOCKit.h"
 
 static NSMutableDictionary *sharedConfigurations;
 
@@ -64,6 +65,9 @@ static NSMutableDictionary *sharedConfigurations;
 
             [self configureEntity:manager];
             
+            NSAssert(manager.pathPatternForGettingCollection, @"No path specified for getting colllection");
+            NSAssert(manager.pathPatternForGettingEntity, @"No path specified for getting entity");
+
             //add descriptors to the object manager
             [manager.objectManager addResponseDescriptorsFromArray:manager.responseDescriptorsForCollection];
             [manager.objectManager addResponseDescriptorsFromArray:manager.responseDescriptorsForEntity];
@@ -107,10 +111,15 @@ static NSMutableDictionary *sharedConfigurations;
             success();
         });
     } else
-    {    
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kAKEntityWillLoadNotification object:self]];
+        });
+        
         [configuration.objectManager getObject:self path:nil parameters:nil success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
             _loaded = YES;
             success();
+            [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kAKEntityDidLoadNotification object:self]];
         } failure:^(RKObjectRequestOperation *operation, NSError *error) {
             if ( failure != nil )
                 failure(error);
@@ -118,11 +127,25 @@ static NSMutableDictionary *sharedConfigurations;
     }
 }
 
+- (void)post:(NSDictionary*)parameters success:(void(^)())success failure:(void(^)(NSError *error))failure
+{    
+    [[RKObjectManager sharedManager] postObject:nil path:self.resourcePath parameters:parameters success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
+        success();
+    } failure:^(RKObjectRequestOperation *operation, NSError *error) {
+        if (failure) failure(error);
+    }];    
+}
+
 - (void)save:(void(^)())success failure:(void(^)(NSError *error))failure
 {
     AKEntityManager *configuration = [[self class] sharedManager];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kAKEntityWillSaveNotification object:self]];
+    });
     [configuration.objectManager postObject:self path:nil parameters:_params success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
         success();
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kAKEntityDidSaveNotification object:self]];
+        [_params removeAllObjects];        
     } failure:^(RKObjectRequestOperation *operation, NSError *error) {
         if ( failure != nil )
             failure(error);
@@ -132,12 +155,28 @@ static NSMutableDictionary *sharedConfigurations;
 - (void)delete:(void(^)())success failure:(void(^)(NSError *error))failure
 {
     AKEntityManager *configuration = [[self class] sharedManager];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kAKEntityWillDeleteNotification object:self]];
+    });
     [configuration.objectManager deleteObject:self path:nil parameters:nil success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
         success();
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kAKEntityDidDeleteNotification object:self]];
     } failure:^(RKObjectRequestOperation *operation, NSError *error) {
         if ( failure != nil )
             failure(error);
     }];
+}
+
+- (RKObjectManager*)objectManager
+{
+    return [[self class] sharedManager].objectManager;
+}
+
+- (NSString*)resourcePath
+{
+    NSString *entityPath = [[self class] sharedManager].pathPatternForGettingEntity;
+    entityPath = [[SOCPattern patternWithString:entityPath] stringFromObject:self];
+    return entityPath;
 }
 
 #pragma mark 

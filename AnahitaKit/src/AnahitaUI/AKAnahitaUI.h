@@ -6,6 +6,7 @@
 //
 //
 
+#import "NimbusNetworkImage.h"
 #import "AKAnahitaAPI.h"
 #import "AKCommonUI.h"
 #import "AKConnect.h"
@@ -13,3 +14,6 @@
 #import "AKPersonEditViewController.h"
 #import "AKSignupViewController.h"
 
+#define kStyleLoginButton @"kStyleLoginButton"
+#define kStyleFacebookLoginButton @"kStyleFacebookLoginButton"
+#define kStyleTwitterLoginButton  @"kStyleTwitterLoginButton"

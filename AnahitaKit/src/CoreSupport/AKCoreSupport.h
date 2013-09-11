@@ -6,7 +6,9 @@
 //  Copyright (c) 2012 Peerglobe Technology. All rights reserved.
 //
 
-
+#define __weak__(object) \
+    __weak __typeof(object)weak##object = object;
+    
 #import "NimbusCore.h"
 #import "AKFoundation.h"
 #import "AKUIKit.h"

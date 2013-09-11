@@ -20,6 +20,6 @@
  
  @abstract
 */
-- (void)setToken:(NSString*)token service:(AKConnectServiceType)service;
+- (void)setOAuthToken:(AKOAuthSessionCredential*)token;
 
 @end

@@ -30,7 +30,7 @@
  
  @abstract
 */
-- (void)listViewController:(AKListViewController*)listViewController
+- (BOOL)listViewController:(AKListViewController*)listViewController
         didSelectCellObject:(id<NICellObject>)cellObject atIndexPath:(NSIndexPath*)indexPath;
 
 /**
@@ -45,7 +45,7 @@
 
 #pragma mark -
 
-@interface AKListViewController : UIViewController <AKListViewControllerDelegate, AKListDataLoaderDelegate>
+@interface AKListViewController : UIViewController <AKListViewControllerDelegate, AKListDataLoaderDelegate, NITableViewModelDelegate>
 {
     @protected
     
@@ -74,5 +74,11 @@
 
 /** @abstract **/
 @property(nonatomic,strong,readonly) UITableView *tableView;
+
+/** @abstract **/
+@property(nonatomic,strong,readonly) NIMutableTableViewModel *tableModel;
+
+/** @abstract **/
+@property(nonatomic,strong,readonly) NITableViewActions *tableActions;
 
 @end

@@ -10,15 +10,9 @@
 
 @implementation AKPerson (Facebook)
 
-- (void)setToken:(NSString *)token service:(AKConnectServiceType)service
+- (void)setOAuthToken:(AKOAuthSessionCredential*)token
 {
-    NSString* serviceStr = service ==kAKFacebookServiceType ? @"facebook" : @"twitter";
-    
-    [self setValuesForKeysWithDictionary:@{
-        @"oauth_handler" : serviceStr,
-        @"oauth_secret"  : @"7w2t4wfh9R7D6u8NQHehCcXjpJAmozEjwIgQtWC5cc",
-        @"oauth_token"   : token
-    }];
+    [self setValuesForKeysWithDictionary:[token toParameters]];
 }
 
 @end

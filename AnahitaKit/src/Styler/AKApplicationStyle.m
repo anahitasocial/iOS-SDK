@@ -71,9 +71,9 @@
 
 - (void)didRemoveStyleTagFromViewNotification:(NSNotification*)notification
 {
-    UIView *view = notification.view;
-    NSString *styleTag = notification.styleTag;
-    NSString *strSelector = [NSString stringWithFormat:@"undoStyle%@", [styleTag camelCasedString]];
+    UIView *view = (UIView*)notification.object;
+    NSString *styleTag = [notification.userInfo valueForKey:kAKStyleStyleTagUserInfoKey];
+    NSString *strSelector = [NSString stringWithFormat:@"undoStyle%@:", [styleTag camelCasedString]];
     SEL selector = NSSelectorFromString(strSelector);
     [_viewStylers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
            if ( [obj respondsToSelector:selector] ) {
@@ -87,8 +87,8 @@
 
 - (void)didAddStyleTagToViewNotification:(NSNotification*)notification
 {
-    UIView *view = notification.view;
-    NSString *styleTag = notification.styleTag;
+    UIView *view = (UIView*)notification.object;
+    NSString *styleTag = [notification.userInfo valueForKey:kAKStyleStyleTagUserInfoKey];
     NSString *strSelector = [NSString stringWithFormat:@"style%@:", [styleTag camelCasedString]];
     SEL selector = NSSelectorFromString(strSelector);
     [_viewStylers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {

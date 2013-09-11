@@ -79,7 +79,7 @@ SYNTHESIZE_PROPERTY(NSMutableDictionary*, _setFormElements, _formElements, OBJC_
 }
 
 
-- (id<NICellObject>)addButton:(NSString*)title action:(void(^)())actionBlock
+- (NICellObject*)addButton:(NSString*)title action:(void(^)())actionBlock
 {
     NITitleCellObject *cellObject = [NITitleCellObject objectWithTitle:title];
     [[self tableModel] addObject:cellObject];

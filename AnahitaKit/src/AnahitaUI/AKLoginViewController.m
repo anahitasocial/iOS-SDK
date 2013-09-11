@@ -21,9 +21,9 @@
     [self addFormElement:@"password" element:[NITextInputFormElement textInputElementWithID:0
             placeholderText:NSLocalizedString(@"PASSWORD-LABEL", @"Password") value:@""]];
     [self addFormSpace];
-    id weakSelf = self;
+    __weak__(self);
     [[self addButton:NSLocalizedString(@"LOGIN-BUTTON", @"Login") action:^{
-        NSDictionary *params = [weakSelf formValues];
+        NSDictionary *params = [weakself formValues];
         [[AKSession sessionWithCredential:params] login:nil failure:^(NSError *error) {
             AKAlertViewShow(
                 NSLocalizedString(@"LOGIN-FAILED", @"Login Failed"),
@@ -46,18 +46,20 @@
                         serivce:kAKFacebookServiceType];
                     
                     [[AKSession sessionWithCredential:credential] login:nil failure:^(NSError *error) {
-                        //need to signup
+                        //need to signup so set the viewer credential
+                         [AKSession.sharedSession.viewer setOAuthToken:credential];
                          NIDPRINT(@"FB Auth passed. No user account need to create Anahita account");
                     }];
                 }
                 
             }];
         }]
-        addStyleTag:@"FBLoginButton"];        
+        addStyleTag:@"FacebookLoginButton"];
         ;
     }
     
-    if ( [AKServiceConfiguration sharedConiguration].twitterConsumer != nil ) {
+    if ( [AKServiceConfiguration sharedConiguration].twitterConsumer != nil )
+    {
         [[self addButton:NSLocalizedString(@"TW-LOGIN-BUTTON", @"Login with Twitter") action:^{
             [SHOmniAuthTwitter performLoginWithListOfAccounts:^(NSArray *accounts, SHOmniAuthAccountPickerHandler pickAccountBlock) {
                     pickAccountBlock([accounts objectAtIndex:0]);
@@ -69,15 +71,17 @@
 
                     [[AKSession sessionWithCredential:credential] login:nil failure:^(NSError *error) {
                          //need to signup
+                         [AKSession.sharedSession.viewer setOAuthToken:credential];
                          NIDPRINT(@"TW Auth passed. No user account need to create Anahita account");
                     }];
             }];
         }]
-        addStyleTag:@"TWLoginButton"];        
+        addStyleTag:@"TwitterLoginButton"];
         ;    
     }
     
     [super viewDidLoad];
+    [self.tableView addStyleTag:@"LoginTableView"];
 	// Do any additional setup after loading the view.
 }
 

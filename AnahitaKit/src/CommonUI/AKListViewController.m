@@ -8,7 +8,7 @@
 
 #import "AKCommonUI.h"
 
-@interface AKListViewController () <UITableViewDelegate, NITableViewModelDelegate>
+@interface AKListViewController () <UITableViewDelegate>
 
 @property(nonatomic,strong,readwrite) NIMutableTableViewModel *tableModel;
 @property(nonatomic,strong,readwrite) UITableView* tableView;
@@ -83,8 +83,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     id<NICellObject> cellObject = [self.tableModel objectAtIndexPath:indexPath];
+    BOOL deselect = NO;
     if ( [self.delegate respondsToSelector:@selector(listViewController:didSelectCellObject:atIndexPath:)]) {
-        [self.delegate listViewController:self didSelectCellObject:cellObject atIndexPath:indexPath];
+        deselect = [self.delegate listViewController:self didSelectCellObject:cellObject atIndexPath:indexPath];
+    }
+    if ( deselect ) {
+        [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
 }
 
@@ -136,7 +140,8 @@
 
 - (UITableViewCell*)tableViewModel:(NITableViewModel *)tableViewModel cellForTableView:(UITableView *)tableView atIndexPath:(NSIndexPath *)indexPath withObject:(id)object
 {
-    UITableViewCell *cell = [NICellFactory tableViewModel:tableViewModel cellForTableView:tableView atIndexPath:indexPath withObject:object];
+    UITableViewCell *cell = [NICellFactory tableViewModel:tableViewModel
+                cellForTableView:tableView atIndexPath:indexPath withObject:object];
     return cell;
 }
 

@@ -36,6 +36,7 @@
     }];
     
     RKResponseDescriptor *errorResponseDescriptor = [RKResponseDescriptor responseDescriptorWithMapping:errorMapping pathPattern:nil keyPath:nil statusCodes:RKStatusCodeIndexSetForClass(RKStatusCodeClassClientError)];
+    
     [objectManager addResponseDescriptor:errorResponseDescriptor];
     
     RKObjectMapping *paginationMapping = [RKObjectMapping mappingForClass:[RKPaginator class]];
@@ -43,7 +44,8 @@
     [paginationMapping addAttributeMappingsFromDictionary:@{
         @"pagination.limit":     @"perPage",
         @"pagination.total":     @"pageCount"
-    }];    
+    }];
+    objectManager.paginationMapping = paginationMapping;
 }
 
 @end

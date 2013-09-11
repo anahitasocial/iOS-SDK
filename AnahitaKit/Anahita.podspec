@@ -40,7 +40,8 @@ Pod::Spec.new do |s|
     subspec.source_files = 'src/AnahitaUI'
     subspec.dependency 'Anahita/AnahitaAPI'
     subspec.dependency 'Anahita/CommonUI'
-    subspec.dependency 'Anahita/Connect'       
+    subspec.dependency 'Anahita/Connect'   
+    subspec.dependency 'Nimbus/NetworkImage'    
   end
     
   s.subspec 'Connect' do |subspec|    
@@ -56,6 +57,7 @@ Pod::Spec.new do |s|
   	subspec.header_dir   = 'AnahitaAPI'  
     subspec.source_files = 'src/AnahitaAPI'
     subspec.dependency 'Anahita/RestKit'
+    subspec.dependency 'FXKeychain', '~> 1.3.4'
   end
     
   s.subspec 'RestKit' do |subspec|

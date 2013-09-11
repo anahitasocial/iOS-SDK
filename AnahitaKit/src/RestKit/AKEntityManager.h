@@ -67,3 +67,21 @@
 @property (nonatomic, strong) NSArray *responseDescriptorsForCollection;
 
 @end
+
+/** @abstract* **/
+extern NSString *const kAKEntityWillLoadNotification;
+
+/** @abstract* **/
+extern NSString *const kAKEntityDidLoadNotification;
+
+/** @abstract* **/
+extern NSString *const kAKEntityWillSaveNotification;
+
+/** @abstract* **/
+extern NSString *const kAKEntityDidSaveNotification;
+
+/** @abstract* **/
+extern NSString *const kAKEntityWillDeleteNotification;
+
+/** @abstract* **/
+extern NSString *const kAKEntityDidDeleteNotification;
