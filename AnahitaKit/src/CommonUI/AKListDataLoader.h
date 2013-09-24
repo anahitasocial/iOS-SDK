@@ -6,6 +6,7 @@
 //
 //
 
+
 @class AKListDataLoader;
 
 /**
@@ -138,6 +139,7 @@
  
 */
 + (instancetype)dataLoaderFromEntityManager:(AKEntityManager*)entityManager
+        path:(NSString*)path
         parameters:(NSDictionary*)parameters
         paginate:(BOOL)paginate
         ;
@@ -163,6 +165,13 @@
 
 @interface AKEntity (AKDataLoader)
 
+/**
+ @method
+ 
+ @abstract
+ 
+*/
++ (AKListDataLoader*)dataLoaderFromPath:(NSString*)path parameters:(NSDictionary*)parameter paginate:(BOOL)paginate;
 
 /**
  @method

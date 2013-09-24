@@ -20,15 +20,7 @@
 */
 @interface AKLoginViewController : UIViewController <AKFormViewController>
 
-/**
- @method
- 
- @abstract 
- Login controller
-*/
-- (id)initWithSession:(AKSession*)session;
-
-/** @abstract */
-@property(nonatomic,readonly) AKSession *session;
 
 @end
+
+extern NSString * const kAKServiceDidAuthorizeWithoutMathhingAccount;

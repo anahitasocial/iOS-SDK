@@ -18,11 +18,11 @@
 {
     [super viewDidLoad];
     int r = arc4random() % 1000;
-    AKPerson *person = [AKSession sharedSession].viewer;
-    person.name     = [NSString stringWithFormat:@"arash%d", r];
-    person.username = [NSString stringWithFormat:@"arash%d", r];
+    AKPerson *person = [AKPerson new];
+    person.name     = [NSString stringWithFormat:@"x%d", r];
+    person.username = [NSString stringWithFormat:@"x%d", r];
     person.email = [NSString stringWithFormat:@"arash%d@example.com", r];
-    person.password = [NSString stringWithFormat:@"arash%d@example.com", r];
+    person.password = @"12345678";
     
     [self addFormElement:@"username" element:[NITextInputFormElement textInputElementWithID:0
             placeholderText:NSLocalizedString(@"USERNAME-LABEL", @"Username") value:person.username]];
@@ -30,7 +30,7 @@
     [self addFormElement:@"name" element:[NITextInputFormElement textInputElementWithID:0
             placeholderText:NSLocalizedString(@"NAME-LABEL", @"Name") value:person.name]];
     
-    [self addFormElement:@"password" element:[NITextInputFormElement textInputElementWithID:0
+    [self addFormElement:@"email" element:[NITextInputFormElement textInputElementWithID:0
             placeholderText:NSLocalizedString(@"EMAIL-LABEL", @"Email") value:person.email]];
 
     [self addFormElement:@"password" element:[NITextInputFormElement textInputElementWithID:0
@@ -40,13 +40,15 @@
     
     __weak__(self);
     [self addButton:NSLocalizedString(@"SIGN-UP-BUTTON", @"Sign Up") action:^{
-        [person setValuesForKeysWithDictionary:weakself.formValues];
+        NSDictionary *values = weakself.formValues;
+        
+        [[AKSession sharedSession].viewer setValuesForKeysWithDictionary:values];
         
         //somehowe we need to get the last oauth credential
         //to pass to person::save
         
-        [person save:^{
-            AKSession *session = [AKSession sessionWithCredential:@{@"username":person.username, @"password":person.password}];
+        [[AKSession sharedSession].viewer save:^{
+            AKSession *session = [AKSession sessionWithCredential:@{@"username":[values valueForKey:@"username"], @"password":[values valueForKey:@"password"]}];
             [session login];
         } failure:^(NSError *error){
             NSMutableArray *msgs = [NSMutableArray array];
@@ -60,18 +62,6 @@
         }];
     }];
     [self.tableView addStyleTag:@"SignupTableView"];
-}
-
-- (void)signup
-{
-    AKPerson *person = [AKPerson new];
-    [person setValuesForKeysWithDictionary:self.formValues];
-    [person save:^{
-        AKSession *session = [AKSession sessionWithCredential:@{@"username":person.username, @"password":person.password}];
-        [session login];
-    } failure:^(NSError *error) {
-        
-    }];
 }
 
 - (void)didReceiveMemoryWarning

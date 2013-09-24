@@ -8,7 +8,7 @@
 
 #import "AKCommonUI.h"
 
-@interface AKListViewController () <UITableViewDelegate>
+@interface AKListViewController ()
 
 @property(nonatomic,strong,readwrite) NIMutableTableViewModel *tableModel;
 @property(nonatomic,strong,readwrite) UITableView* tableView;
@@ -52,24 +52,26 @@
 {
     [super loadView];
     
-    _tableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStylePlain];
-
-    self.tableView.delegate   = self;
-    
-    self.view = _tableView;
+    self.view  = [UIView viewWithFrame:self.view.frame];    
+    _tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    _tableView.delegate = self;
+    _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.view addSubview:_tableView];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    NSAssert(self.listDataLoader, @"No dataloader specified");
-    
-    __weak id this = self;    
-    
-    self.listDataLoader.delegate = self;
-    
-    [self.listDataLoader loadData];
+
+    if ( self.listDataLoader ) {        
+        [self.listDataLoader loadData];
+    }
+}
+
+- (void)setListDataLoader:(id<AKListDataLoader>)listDataLoader
+{
+    _listDataLoader = listDataLoader;
+    _listDataLoader.delegate = self;    
 }
 
 #pragma mark -

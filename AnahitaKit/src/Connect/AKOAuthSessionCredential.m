@@ -19,8 +19,9 @@
 @implementation AKOAuthSessionCredential
 
 + (id)credentialWithToken:(NSString *)token secret:(NSString *)secret serivce:(AKConnectServiceType)service
-{
+{ 
     AKOAuthSessionCredential *credt = [AKOAuthSessionCredential new];
+    NSAssert(token, @"Token must be specified");
     credt.token  = token;
     credt.secret = secret;
     credt.serviceType = service;
@@ -28,13 +29,11 @@
 }
 
 - (NSDictionary*)toParameters
-{
-    NSString* service = self.serviceType == kAKFacebookServiceType ? @"facebook" : @"twitter";
-    
+{    
     return @{
-        @"oauth_handler" : service,
-        @"oauth_secret"  : self.secret,
-        @"oauth_token"   : self.token
+        @"oauth_handler" : AKConnectStringFromServiceType(self.serviceType),
+        @"oauth_token"   : self.token,
+        @"oauth_secret"  : self.secret ? self.secret : @""
     };
 }
 

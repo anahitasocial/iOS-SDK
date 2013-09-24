@@ -8,6 +8,9 @@
 
 #define __weak__(object) \
     __weak __typeof(object)weak##object = object;
+
+#define __strong__(object) \
+    __typeof(object)strong##object = object;
     
 #import "NimbusCore.h"
 #import "AKFoundation.h"

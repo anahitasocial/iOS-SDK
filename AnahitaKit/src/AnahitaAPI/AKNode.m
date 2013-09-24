@@ -124,7 +124,7 @@
     [RKResponseDescriptor responseDescriptorWithMapping:configuration.mappingForResponse
      method:RKRequestMethodPOST | RKRequestMethodGET pathPattern:@"people/session" keyPath:nil statusCodes:
         RKStatusCodeIndexSetForClass(RKStatusCodeClassSuccessful)
-     ];
+     ];       
 }
 
 @end

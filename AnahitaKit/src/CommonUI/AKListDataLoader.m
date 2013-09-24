@@ -12,11 +12,13 @@
 @interface AKListDataLoader_Entity : AKListDataLoader
 
 - (id)initEntityManager:(AKEntityManager*)entityManager
+        path:(NSString*)path
         parameters:(NSDictionary*)parameters
         paginate:(BOOL)paginate
         ;
 
 @end
+
 
 @interface AKListDataLoader_Array : AKListDataLoader
 
@@ -46,10 +48,11 @@
 }
 
 + (instancetype)dataLoaderFromEntityManager:(AKEntityManager*)entityManager
+        path:(NSString*)path
         parameters:(NSDictionary*)parameters
         paginate:(BOOL)paginate
 {
-    return [[AKListDataLoader_Entity alloc] initEntityManager:entityManager parameters:parameters paginate:paginate];
+    return [[AKListDataLoader_Entity alloc] initEntityManager:entityManager path:path parameters:parameters paginate:paginate];
 }
 
 - (id)init
@@ -149,6 +152,11 @@
 
 @implementation AKEntity(AKDataLoader)
 
++ (AKListDataLoader*)dataLoaderFromPath:(NSString*)path parameters:(NSDictionary*)parameter paginate:(BOOL)paginate
+{
+    return [AKListDataLoader dataLoaderFromEntityManager:[self sharedManager] path:path parameters:parameter paginate:paginate];
+}
+
 + (AKListDataLoader*)dataLoaderPaginate:(BOOL)paginate
 {
     return [self dataLoaderWithParameters:nil paginate:paginate];
@@ -156,7 +164,7 @@
 
 + (AKListDataLoader*)dataLoaderWithParameters:(NSDictionary*)parameters paginate:(BOOL)paginate
 {
-    return [AKListDataLoader dataLoaderFromEntityManager:[self sharedManager] parameters:parameters paginate:paginate];
+    return [self dataLoaderFromPath:nil parameters:parameters paginate:paginate];
 }
 
 @end
@@ -168,9 +176,11 @@
     NSDictionary    *_baseParameters;
     NSMutableDictionary    *_parameters;
     RKPaginator     *_paginator;
+    NSString *_path;
 }
 
 - (id)initEntityManager:(AKEntityManager*)entityManager
+        path:path
         parameters:(NSDictionary*)parameters
         paginate:(BOOL)paginate
 
@@ -180,6 +190,7 @@
         _entityManager     = entityManager;
         _baseParameters    = parameters;
         _paginate          = paginate;
+        _path              = path;
         _parameters        = [NSMutableDictionary dictionaryWithDictionary:_baseParameters];
     }
     
@@ -187,7 +198,7 @@
 }
 
 - (void)loadMoreData
-{
+{ 
     NSAssert(_paginator, @"Pagniator is null");
     [self willLoadObjectsForPage:_paginator.currentPage + 1];
     [_paginator loadNextPage];
@@ -225,13 +236,13 @@
     if ( parameters ) {
         [_parameters addEntriesFromDictionary:parameters];
     }
-    
-    __weak AKListDataLoader_Entity *weakself = self;
+        
+    __weak__(self);
     
     [self willLoadObjectsForPage:0];
     
-    if ( _paginate ) {
-        _paginator = [_entityManager paginatorWithParamaters:_parameters];
+    if ( _paginate ) { 
+        _paginator = [_entityManager paginatorWithPath:_path paramaters:_parameters];
         [_paginator setCompletionBlockWithSuccess:^(RKPaginator *paginator, NSArray *objects, NSUInteger page) {
             [weakself didLoadObjects:objects forPage:page];
         } failure:^(RKPaginator *paginator, NSError *error) {
@@ -239,7 +250,7 @@
         }];
         [_paginator loadPage:0];
     } else {
-        [_entityManager objectsWithParameters:_parameters success:^(NSArray *objects) {
+        [_entityManager objectsWithPath:_path parameters:_parameters success:^(NSArray *objects) {
                 [weakself didLoadObjects:objects forPage:0];
         } failure:^(NSError *error) {[weakself didFailWithError:error];}];
     }

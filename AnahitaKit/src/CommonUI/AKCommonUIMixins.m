@@ -35,12 +35,16 @@ SYNTHESIZE_PROPERTY(NSMutableDictionary*, _setFormElements, _formElements, OBJC_
 {
     class_copyMethods(self, class,
             @selector(AKFormViewController_loadView),
+            @selector(tableView:heightForRowAtIndexPath:),
             @selector(_setTableView:),    @selector(_tableView),
             @selector(_setTableModel:),   @selector(_tableModel),
             @selector(_setTableViewStyle:),   @selector(_tableViewStyle),
             @selector(_setTableActions:), @selector(_tableActions),
             @selector(_setFormElements:), @selector(_formElements),nil
     );
+    
+//    [class jr_swizzleMethod:@selector(tableView:heightForRowAtIndexPath:)
+//        withMethod:@selector(AKFormViewController_tableView:heightForRowAtIndexPath:) error:nil];
     
     [class jr_swizzleMethod:@selector(loadView) withMethod:@selector(AKFormViewController_loadView) error:nil];
 }
@@ -116,7 +120,9 @@ SYNTHESIZE_PROPERTY(NSMutableDictionary*, _setFormElements, _formElements, OBJC_
         UITableViewStyle tableViewStyle = [self tableViewStyle];
         tableView = [[UITableView alloc] initWithFrame:CGRectZero style:tableViewStyle];
         [self _setTableView:tableView];
-        [mixer.view addSubview:tableView];
+        tableView.delegate   = (id<UITableViewDelegate>)self;
+        tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        [mixer.view addSubview:tableView];        
         //nothign has changed
         if ( CGRectEqualToRect(tableView.frame,CGRectZero) ) {
             tableView.frame = mixer.view.bounds;
@@ -147,6 +153,44 @@ SYNTHESIZE_PROPERTY(NSMutableDictionary*, _setFormElements, _formElements, OBJC_
     return [values dictionaryByReducingObjectsUsingBlock:^BOOL(id key, id obj) {
         return ![obj isKindOfClass:[NSNull class]];
     }];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [NICellFactory tableView:[self tableView] heightForRowAtIndexPath:indexPath model:[self tableModel]];
+}
+
+- (id)addObject:(id<NICellObject>)object detailAction:(NITableViewActionBlock)actionBlock
+{
+    [[self tableModel] addObject:object];
+    if ( actionBlock ) {
+        [[self tableActions] attachToObject:object detailBlock:actionBlock];
+    }
+    return object;    
+}
+
+- (id)addObject:(id<NICellObject>)object
+{
+    [[self tableModel] addObject:object];
+    return object;    
+}
+
+- (id)addObject:(id<NICellObject>)object navgiationAction:(NITableViewActionBlock)actionBlock
+{
+    [[self tableModel] addObject:object];
+    if ( actionBlock ) {
+        [[self tableActions] attachToObject:object navigationBlock:actionBlock];
+    }
+    return object;
+}
+
+- (id)addObject:(id<NICellObject>)object tapAction:(NITableViewActionBlock)actionBlock
+{
+    [[self tableModel] addObject:object];
+    if ( actionBlock ) {
+        [[self tableActions] attachToObject:object tapBlock:actionBlock];
+    }
+    return object;    
 }
 
 @end

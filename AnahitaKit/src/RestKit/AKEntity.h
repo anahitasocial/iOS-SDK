@@ -61,9 +61,25 @@
  @abstract
  
 */
++ (RKPaginator*)paginatorWithPath:(NSString*)path parameters:(NSDictionary*)parameters;
+
+/**
+ @method
+ 
+ @abstract
+ 
+*/
 + (void)objectsWithParameters:(NSDictionary*)parameters success:(void(^)(NSArray *objects))success
     failure:(void(^)(NSError *error))failure;
 
+/**
+ @method
+ 
+ @abstract
+ 
+*/
++ (void)objectsFromPath:(NSString*)path parameters:(NSDictionary*)parameters success:(void(^)(NSArray *objects))success
+    failure:(void(^)(NSError *error))failure;
 
 /**
  @method

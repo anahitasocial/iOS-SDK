@@ -15,6 +15,7 @@ NSString *const kAKEntityDidSaveNotification = @"kAKEntityDidSaveNotification";
 NSString *const kAKEntityWillDeleteNotification = @"kAKEntityWillDeleteNotification";
 NSString *const kAKEntityDidDeleteNotification  = @"kAKEntityDidDeleteNotification";
 
+
 @implementation AKEntityManager
 
 - (id)initForClass:(Class)entityClass
@@ -24,28 +25,62 @@ NSString *const kAKEntityDidDeleteNotification  = @"kAKEntityDidDeleteNotificati
     }
     
     return self;
-}
+} 
 
 - (RKPaginator*)paginatorWithParamaters:(NSDictionary*)parameters
 {
-    NSString *pattern = self.pathPatternForGettingPaginatedCollection;
+    return [self paginatorWithPath:self.pathPatternForGettingCollection paramaters:parameters];
+}
+
+- (RKPaginator*)paginatorWithPath:(NSString *)path paramaters:(NSDictionary *)parameters
+{ 
+    if ( !path ) path = self.pathPatternForGettingCollection;
     
-    if ( parameters ) {
-        pattern = [pattern stringByAppendingDictionaryQueryParamaters:parameters];
+    if ( ![path isEqualToString:self.pathPatternForGettingCollection] )
+    {
+        NSArray *descriptors = [self.objectManager.responseDescriptors arrayByFilteringObjectsUsingBlock:^BOOL(RKResponseDescriptor *responseDescriptor, NSUInteger idx) {
+            return responseDescriptor.pathPattern &&
+                [responseDescriptor matchesPath:path] && (RKRequestMethodGET & responseDescriptor.method);
+        }];
+        
+        if ( descriptors.count == 0 )
+        {
+            [self.objectManager addResponseDescriptor:[RKResponseDescriptor responseDescriptorWithMapping:self.mappingForResponse method:RKRequestMethodGET pathPattern:path keyPath:@"data" statusCodes:RKStatusCodeIndexSetForClass(RKStatusCodeClassSuccessful)]];
+        }
     }
     
-    return [self.objectManager paginatorWithPathPattern:pattern];
+    if ( parameters ) {
+        path = [path stringByAppendingDictionaryQueryParamaters:parameters];
+    }
+     
+    return [self.objectManager paginatorWithPathPattern:[self paginatedColllectionPathFromPath:path]];
+}
+
+- (void)objectsWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure
+{
+    if ( !path ) path = self.pathPatternForGettingCollection;
+    NSArray *descriptors = [self.objectManager.responseDescriptors arrayByFilteringObjectsUsingBlock:^BOOL(RKResponseDescriptor *responseDescriptor, NSUInteger idx) {
+        return responseDescriptor.pathPattern &&
+            [responseDescriptor matchesPath:path] && (RKRequestMethodGET & responseDescriptor.method);
+    }];
+    
+    if ( descriptors.count == 0 )
+    {
+        [self.objectManager addResponseDescriptor:[RKResponseDescriptor responseDescriptorWithMapping:self.mappingForResponse method:RKRequestMethodGET pathPattern:path keyPath:@"data" statusCodes:RKStatusCodeIndexSetForClass(RKStatusCodeClassSuccessful)]];
+    }
+    
+    
+    [self.objectManager getObjectsAtPath:path parameters:parameters success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
+        success([mappingResult array]);
+    } failure:^(RKObjectRequestOperation *operation, NSError *error) {
+        failure(error);
+    }];  
 }
 
 - (void)objectsWithParameters:(NSDictionary*)parameters success:(void(^)(NSArray *objects))success
     failure:(void(^)(NSError *error))failure
 {
-
-    [self.objectManager getObjectsAtPath:self.pathPatternForGettingCollection parameters:parameters success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
-        success([mappingResult array]);
-    } failure:^(RKObjectRequestOperation *operation, NSError *error) {
-        failure(error);
-    }];    
+    [self objectsWithPath:self.pathPatternForGettingCollection parameters:parameters success:success failure:failure];
 }
 
 - (RKObjectMapping*)mappingForResponse
@@ -92,15 +127,9 @@ NSString *const kAKEntityDidDeleteNotification  = @"kAKEntityDidDeleteNotificati
     return _responseDescriptorsForEntity;
 }
 
-- (NSString*)pathPatternForGettingPaginatedCollection
+- (NSString *)paginatedColllectionPathFromPath:(NSString*)path
 {
-    if ( !_pathPatternForGettingPaginatedCollection
-        && self.pathPatternForGettingCollection
-      ) {
-        _pathPatternForGettingPaginatedCollection = [self.pathPatternForGettingCollection
-                stringByAppendingString:@"?limit=:perPage&start=:offset"];
-    }
-    return _pathPatternForGettingPaginatedCollection;
+    return [path stringByAppendingStringQueryParamaters:@"limit=:perPage&start=:offset"];
 }
 
 @end

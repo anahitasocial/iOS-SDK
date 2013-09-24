@@ -58,6 +58,9 @@ NSString *const kAKSessionKeyChainKey = @"kAKSessionKeyChainKey";
 @end
 
 @implementation AKSession
+{
+    AKPerson *_viewer;
+}
 
 /**
  @method 
@@ -87,9 +90,7 @@ NSString *const kAKSessionKeyChainKey = @"kAKSessionKeyChainKey";
 - (id)init
 {
     if ( self = [super init] ) {
-        self.viewer = [AKPerson new];
-        //observe the password
-        [self.viewer addObserver:self forKeyPath:@"password" options:NSKeyValueObservingOptionNew context:nil];
+        
 ;    }
     return self;
 }
@@ -121,6 +122,21 @@ NSString *const kAKSessionKeyChainKey = @"kAKSessionKeyChainKey";
 
 }
 
+- (void)setViewer:(AKPerson *)viewer
+{    
+    [_viewer removeObserver:self forKeyPath:@"password" context:nil];
+    _viewer = viewer;
+    [_viewer addObserver:self forKeyPath:@"password" options:NSKeyValueObservingOptionNew context:nil];
+}
+
+- (AKPerson*)viewer
+{
+    if ( _viewer == nil ) {
+        [self setViewer:[AKPerson new]];
+    }
+    return _viewer;
+}
+
 - (void)login
 {
     [self login:nil failure:nil];
@@ -137,11 +153,12 @@ NSString *const kAKSessionKeyChainKey = @"kAKSessionKeyChainKey";
 
 #pragma mark - Observing viewer attributes
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(AKPerson*)object change:(NSDictionary *)change context:(void *)context
 {
-    if ( [keyPath isEqualToString:@"password"] )
+    NSString *newPassword = [change valueForKey:NSKeyValueChangeNewKey];
+    if ( [keyPath isEqualToString:@"password"]
+                    && self.viewer.nodeID != nil && newPassword.length > 0)
     {
-        NSString *newPassword = [change valueForKey:NSKeyValueChangeNewKey];
         [[FXKeychain defaultKeychain] setObject:
             [[[AKSessionBasicAuthCredential alloc] initWithUsername:self.viewer.username andPassword:newPassword] toParameters]
           forKey:kAKSessionKeyChainKey];

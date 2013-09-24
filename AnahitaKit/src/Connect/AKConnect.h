@@ -24,6 +24,11 @@ typedef enum {
     kAKTwitterServiceType
 } AKConnectServiceType;
 
+inline static NSString* AKConnectStringFromServiceType(AKConnectServiceType type)
+{
+    return type == kAKFacebookServiceType ? @"facebook" : @"twitter";
+}
+
 #import "AKServiceConfiguration+AKConnect.h"
 #import "AKOAuthSessionCredential.h"
 #import "AKPerson+Facebook.h"

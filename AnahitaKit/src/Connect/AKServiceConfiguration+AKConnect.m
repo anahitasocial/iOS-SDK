@@ -35,10 +35,7 @@ SYNTHESIZE_PROPERTY_STRONG(AKOAuthConsumer*, _setTwitterConsumer, twitterConsume
 
 - (void)setFacebookConsumer:(AKOAuthConsumer *)facebookConsumer
 {
-    [self _setFacebookConsumer:facebookConsumer];
-    //set fb active session
-    FBSession.activeSession =
-        [[FBSession alloc] initWithAppID:facebookConsumer.key permissions:nil urlSchemeSuffix:nil tokenCacheStrategy:nil];
+    [self _setFacebookConsumer:facebookConsumer];    
 }
 
 - (void)setTwitterConsumer:(AKOAuthConsumer *)twitterConsumer

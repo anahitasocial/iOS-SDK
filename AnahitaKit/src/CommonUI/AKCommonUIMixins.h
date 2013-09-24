@@ -33,7 +33,7 @@ typedef NIFormElement*(^FormElementBlock)(NSInteger elementID);
 
  @abstract
 */
-- (NICellObject*)addButton:(NSString*)title action:(void(^)())actionBlock;
+- (id)addButton:(NSString*)title action:(void(^)())actionBlock;
 
 /**
  @method
@@ -41,6 +41,34 @@ typedef NIFormElement*(^FormElementBlock)(NSInteger elementID);
  @abstract
 */
 - (id)addFormElement:(NSString*)name element:(id<AKFormElement>)element;
+
+/**
+ @method
+
+ @abstract
+*/
+- (id)addObject:(id<NICellObject>)object;
+
+/**
+ @method
+
+ @abstract
+*/
+- (id)addObject:(id<NICellObject>)object detailAction:(NITableViewActionBlock)actionBlock;
+
+/**
+ @method
+
+ @abstract
+*/
+- (id)addObject:(id<NICellObject>)object navgiationAction:(NITableViewActionBlock)actionBlock;
+
+/**
+ @method
+
+ @abstract
+*/
+- (id)addObject:(id<NICellObject>)object tapAction:(NITableViewActionBlock)actionBlock;
 
 /** @abstract */
 @property(nonatomic,readonly) NSDictionary* formValues;

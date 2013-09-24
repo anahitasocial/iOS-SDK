@@ -20,7 +20,7 @@ enum {
 
 }
 
-@property(nonatomic,readwrite) UIImage *avatar;
+
 @end
 
 @implementation AKPersonEditViewController
@@ -36,16 +36,14 @@ enum {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    [self.tableView addStyleTag:@"SignupTableView"];
     [self addFormElement:@"username" element:[NITextInputFormElement textInputElementWithID:kUsernameField placeholderText:@"Username" value:_person.username]];
     [self addFormElement:@"name" element:[NITextInputFormElement textInputElementWithID:kNameField placeholderText:@"Name" value:_person.name]];
     [self addFormElement:@"email" element:[NITextInputFormElement textInputElementWithID:kEmailField placeholderText:@"Email" value:_person.email]];
     [self addFormElement:@"password" element:[NITextInputFormElement textInputElementWithID:kPasswordField placeholderText:@"Password" value:@""]];
     [self addFormSpace];
     __weak__(self);
-    [self addButton:NSLocalizedString(@"SELECT-PROFILE-PICTURE", @"Profile Picture") action:^{
-        [weakself openPhotoSelector];
-    }];
+ 
     
     [self addFormSpace];
 
@@ -54,46 +52,22 @@ enum {
     }];
 }
 
-- (void)openPhotoSelector
-{
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    [self presentViewController:picker animated:YES completion:nil];
-    return YES;    
-}
 
 - (void)savePerson
 {
     __weak__(self);
-    [weakself.person setValuesForKeysWithDictionary:weakself.formValues];
-
-    NSMutableURLRequest *request = [weakself.person.objectManager multipartFormRequestWithObject:weakself.person method:RKRequestMethodPOST path:nil parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-        if ( weakself.avatar ) {
-             NSData *imageData = UIImageJPEGRepresentation(weakself.avatar, 0.9);
-            [formData appendPartWithFileData:imageData
-                name:@"portrait"
-                fileName:@"filename" mimeType:@"image/jpg"];
-        }
-    }];
+    [self.person setValuesForKeysWithDictionary:weakself.formValues];
     
+    //reset the password field
     NSIndexPath *passwordIndex = [self.tableView indexPathForCell:(UITableViewCell*)[self.tableView viewWithTag:kPasswordField]];
-    NITextInputFormElement *element = [weakself.tableModel objectAtIndexPath:passwordIndex];
+    NITextInputFormElement *element = [self.tableModel objectAtIndexPath:passwordIndex];
     element.value = @"";
-    [weakself.tableView reloadRowsAtIndexPaths:@[passwordIndex] withRowAnimation:UITableViewRowAnimationNone];
-    weakself.avatar = nil;
     
-    RKObjectRequestOperation *operation = [weakself.person.objectManager objectRequestOperationWithRequest:request success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
-        } failure:^(RKObjectRequestOperation *operation, NSError *error) {
-            [weakself handleError:error];
-        }];
+    [self.person save:^{
         
-        [weakself.person.objectManager enqueueObjectRequestOperation:operation];    
-}
-
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
-    self.avatar = [info objectForKey:UIImagePickerControllerOriginalImage];
-    [self dismissViewControllerAnimated:YES completion:nil];
+    } failure:^(NSError *error) {
+        [weakself handleError:error];
+    }];            
 }
 
 - (void)handleError:(NSError*)error
@@ -110,11 +84,6 @@ enum {
 
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"The following error occured" message:message delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
     [alert show];
-}
-
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
-{
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)didReceiveMemoryWarning

@@ -45,7 +45,7 @@
 
 #pragma mark -
 
-@interface AKListViewController : UIViewController <AKListViewControllerDelegate, AKListDataLoaderDelegate, NITableViewModelDelegate>
+@interface AKListViewController : UIViewController <AKListViewControllerDelegate, AKListDataLoaderDelegate, NITableViewModelDelegate,UITableViewDelegate>
 {
     @protected
     

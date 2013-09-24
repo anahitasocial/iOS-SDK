@@ -10,6 +10,46 @@
 #import "JRSwizzle.h"
 #import <objc/runtime.h>
 
+@interface NITableViewModelSection : NSObject
+@property(nonatomic,readonly) NSArray *rows;
+@end
+
+@interface NITableViewModel()
+
+@property(nonatomic,readonly) NSArray *sections;
+
+@end
+
+@implementation NITableViewModel(ExtraMethods)
+
+- (NSIndexPath*)indexPathOfObject:(id)object
+{
+    __block NSIndexPath *indexPath = nil;
+    [self.sections enumerateObjectsUsingBlock:^(NITableViewModelSection *section, NSUInteger sectionIndex, BOOL *stop) {
+        stop = indexPath != nil;
+        [section.rows enumerateObjectsUsingBlock:^(id<NICellObject> obj, NSUInteger rowIndex, BOOL *stop) {
+                if ( [obj isEqual:object] ) {
+                    indexPath = [NSIndexPath indexPathForRow:rowIndex inSection:sectionIndex];
+                }
+                stop = indexPath != nil;
+        }];
+    }];
+    return indexPath; 
+}
+
+@end
+
+@implementation NIMutableTableViewModel(ExtraMethods)
+
+- (NSArray*)replaceObjectAtIndexPath:(NSIndexPath *)indexPath withObject:(id)object
+{
+    [self removeObjectAtIndexPath:indexPath];
+    [self insertObject:object atRow:indexPath.row inSection:indexPath.section];
+    return [NSArray arrayWithObject:indexPath];
+}
+
+@end
+
 @interface NICellFactory(SwizzleCellFactoryMethod)
 @end
 

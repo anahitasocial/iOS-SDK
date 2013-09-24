@@ -39,6 +39,28 @@
 
  @abstract
 */
+- (RKPaginator*)paginatorWithPath:(NSString*)path paramaters:(NSDictionary*)parameters;
+
+/**
+ @method
+
+ @abstract
+*/
+- (NSString *)paginatedColllectionPathFromPath:(NSString*)path;
+
+/**
+ @method
+
+ @abstract
+*/
+- (void)objectsWithPath:(NSString*)path parameters:(NSDictionary*)parameters success:(void(^)(NSArray *objects))success
+    failure:(void(^)(NSError *error))failure;
+
+/**
+ @method
+
+ @abstract
+*/
 - (void)objectsWithParameters:(NSDictionary*)parameters success:(void(^)(NSArray *objects))success
     failure:(void(^)(NSError *error))failure;
 
@@ -50,9 +72,6 @@
 
 /** @abstract **/
 @property (nonatomic, strong) RKObjectManager *objectManager;
-
-/** @abstract **/
-@property (nonatomic, copy) NSString *pathPatternForGettingPaginatedCollection;
 
 /** @abstract **/
 @property (nonatomic, copy) NSString *pathPatternForGettingCollection;

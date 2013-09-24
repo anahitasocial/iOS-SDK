@@ -8,6 +8,18 @@
 
 #import "AKCommonUI.h"
 
+@interface NITableViewModel(ExtraMethods)
+
+- (NSIndexPath*)indexPathOfObject:(id)object;
+
+@end
+
+@interface NIMutableTableViewModel(ExtraMethods)
+
+- (NSArray*)replaceObjectAtIndexPath:(NSIndexPath*)indexPath withObject:(id)object;
+
+@end
+
 /**
  @class NICellObject
  

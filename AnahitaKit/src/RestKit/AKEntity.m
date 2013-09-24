@@ -19,10 +19,21 @@ static NSMutableDictionary *sharedConfigurations;
     return [self.sharedManager paginatorWithParamaters:parameters];
 }
 
++ (RKPaginator*)paginatorWithPath:(NSString *)path parameters:(NSDictionary *)parameters
+{
+    return [self.sharedManager paginatorWithPath:path paramaters:parameters];
+}
+
 + (void)objectsWithParameters:(NSDictionary*)parameters success:(void(^)(NSArray *objects))success
     failure:(void(^)(NSError *error))failure
 {
     [self.sharedManager objectsWithParameters:parameters success:success failure:failure];
+}
+
++ (void)objectsFromPath:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure
+
+{
+    [self.sharedManager objectsWithPath:path parameters:parameters success:success failure:failure];
 }
 
 #pragma mark -

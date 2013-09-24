@@ -12,8 +12,17 @@
 
 @end
 
+NSString * const kAKServiceDidAuthorizeWithoutMathhingAccount = @"kAKServiceDidAuthorizeWithoutMathhingAccount";
+
 @implementation AKLoginViewController
 
+- (id)init
+{
+    if ( self = [super init] ) {
+         
+    }    
+    return self;
+}
 - (void)viewDidLoad
 {
     [self addFormElement:@"username" element:[NITextInputFormElement textInputElementWithID:0
@@ -23,7 +32,16 @@
     [self addFormSpace];
     __weak__(self);
     [[self addButton:NSLocalizedString(@"LOGIN-BUTTON", @"Login") action:^{
-        NSDictionary *params = [weakself formValues];
+        NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:weakself.formValues];
+        if ( FBSession.activeSession.state == FBSessionStateOpen )
+        {
+                    AKOAuthSessionCredential *credential = [AKOAuthSessionCredential
+                        credentialWithToken:FBSession.activeSession.accessTokenData.accessToken
+                        secret:nil
+                        serivce:kAKFacebookServiceType];
+                    [params addEntriesFromDictionary:[credential toParameters]];
+        }
+                
         [[AKSession sessionWithCredential:params] login:nil failure:^(NSError *error) {
             AKAlertViewShow(
                 NSLocalizedString(@"LOGIN-FAILED", @"Login Failed"),
@@ -33,13 +51,21 @@
         }];
     }]
     addStyleTag:@"LoginButton"];
-    [self addFormSpace];
-    if ( FBSession.activeSession != nil )
-    {
-        [[self addButton:NSLocalizedString(@"FB-LOGIN-BUTTON", @"Login with Facebook") action:^{
-            [FBSession.activeSession openWithCompletionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
-                if ( status & FBSessionStateOpen )
-                {
+    [self addFormSpace];    
+    
+    [[self addButton:NSLocalizedString(@"FB-LOGIN-BUTTON", @"Login with Facebook") action:^{
+        //if facebook session is not already open then open a new one
+        if ( FBSession.activeSession.state == FBSessionStateCreated ||
+            FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded
+        )
+        {
+            FBSessionStateHandler handler = ^(FBSession *session,
+                                       FBSessionState status,
+                                       NSError *error)
+            {
+               if ( status == FBSessionStateOpen )
+               {
+               
                     AKOAuthSessionCredential *credential = [AKOAuthSessionCredential
                         credentialWithToken:session.accessTokenData.accessToken
                         secret:nil
@@ -48,15 +74,21 @@
                     [[AKSession sessionWithCredential:credential] login:nil failure:^(NSError *error) {
                         //need to signup so set the viewer credential
                          [AKSession.sharedSession.viewer setOAuthToken:credential];
-                         NIDPRINT(@"FB Auth passed. No user account need to create Anahita account");
+                         NIDPRINT(@"FB Authorized. Can't find a user to match");
+                         NIDPRINT(@"Storing the credential in the viewer %@ %@", AKSession.sharedSession.viewer, [credential toParameters]);
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kAKServiceDidAuthorizeWithoutMathhingAccount object:credential userInfo:nil];                        
                     }];
-                }
-                
-            }];
-        }]
-        addStyleTag:@"FacebookLoginButton"];
-        ;
-    }
+                }            
+            };
+            
+            FBSession *session = [[FBSession alloc] initWithAppID:nil permissions:@[] defaultAudience:FBSessionDefaultAudienceEveryone urlSchemeSuffix:nil tokenCacheStrategy:nil];
+            [session openWithBehavior:FBSessionLoginBehaviorWithFallbackToWebView completionHandler:handler];
+            [FBSession setActiveSession:session];            
+            
+        }        
+    }]
+    addStyleTag:@"FacebookLoginButton"];
+    ;
     
     if ( [AKServiceConfiguration sharedConiguration].twitterConsumer != nil )
     {
@@ -72,7 +104,9 @@
                     [[AKSession sessionWithCredential:credential] login:nil failure:^(NSError *error) {
                          //need to signup
                          [AKSession.sharedSession.viewer setOAuthToken:credential];
-                         NIDPRINT(@"TW Auth passed. No user account need to create Anahita account");
+                         NIDPRINT(@"Twitter Authorized. Can't find a user to match");
+                         NIDPRINT(@"Storing the credential in the viewer %@ %@", AKSession.sharedSession.viewer, [credential toParameters]);
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kAKServiceDidAuthorizeWithoutMathhingAccount object:credential userInfo:nil];
                     }];
             }];
         }]
