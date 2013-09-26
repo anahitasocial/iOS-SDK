@@ -19,10 +19,10 @@
     [super viewDidLoad];
     int r = arc4random() % 1000;
     AKPerson *person = [AKPerson new];
-    person.name     = [NSString stringWithFormat:@"x%d", r];
-    person.username = [NSString stringWithFormat:@"x%d", r];
-    person.email = [NSString stringWithFormat:@"arash%d@example.com", r];
-    person.password = @"12345678";
+    person.name     = @"";//[NSString stringWithFormat:@"x%d", r];
+    person.username = @"";//[NSString stringWithFormat:@"x%d", r];
+    person.email = @"";//[NSString stringWithFormat:@"arash%d@example.com", r];
+    person.password = @"";//@"12345678";
     
     [self addFormElement:@"username" element:[NITextInputFormElement textInputElementWithID:0
             placeholderText:NSLocalizedString(@"USERNAME-LABEL", @"Username") value:person.username]];

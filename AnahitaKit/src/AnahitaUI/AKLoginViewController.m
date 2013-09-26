@@ -55,8 +55,15 @@ NSString * const kAKServiceDidAuthorizeWithoutMathhingAccount = @"kAKServiceDidA
     
     [[self addButton:NSLocalizedString(@"FB-LOGIN-BUTTON", @"Login with Facebook") action:^{
         //if facebook session is not already open then open a new one
+        if (
+            FBSession.activeSession.state == FBSessionStateOpen
+            ) {
+            [[FBSession activeSession] close];
+        }
+            
         if ( FBSession.activeSession.state == FBSessionStateCreated ||
-            FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded
+            FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded ||
+            FBSession.activeSession.state == FBSessionStateClosed
         )
         {
             FBSessionStateHandler handler = ^(FBSession *session,
