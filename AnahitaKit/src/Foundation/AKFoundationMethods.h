@@ -115,7 +115,7 @@ BOOL class_copyMethod(Class sourceClass, SEL sourceSelector, Class targetClass, 
  @abstract
 
  */
-BOOL class_copyMethods(Class sourceClass, Class targetClass, SEL method1, ...);
+void class_copyMethods(Class sourceClass, Class targetClass, SEL method1, ...);
 
 /**
  @method

@@ -119,7 +119,7 @@ BOOL class_copyMethod(Class sourceClass, SEL sourceSelector, Class targetClass, 
     return copied;
 }
 
-BOOL class_copyMethods(Class sourceClass, Class targetClass, SEL method1, ...)
+void class_copyMethods(Class sourceClass, Class targetClass, SEL method1, ...)
 {
     va_list args;
     va_start(args, method1);
@@ -127,6 +127,7 @@ BOOL class_copyMethods(Class sourceClass, Class targetClass, SEL method1, ...)
         class_copyMethod(sourceClass, arg, targetClass, arg);
     }
     va_end(args);
+    
 }
 
 NSArray *class_getMethodList(Class class) {
