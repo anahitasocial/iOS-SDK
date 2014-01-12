@@ -264,9 +264,7 @@
 - (void)willLoadObjectsForPage:(NSUInteger)page
 {
     if ( [self.delegate respondsToSelector:@selector(listLoader:willLoadObjectsForPage:)] ) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.delegate listLoader:self willLoadObjectsForPage:page];
-        });
+         [self.delegate listLoader:self willLoadObjectsForPage:page];
     }
 }
 
