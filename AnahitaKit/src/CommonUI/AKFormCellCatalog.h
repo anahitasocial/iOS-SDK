@@ -92,7 +92,7 @@ typedef void(^AKSelectorFormElementValueLabelTransformationBlock)(id object, NSS
 @property(nonatomic,readonly) NSArray *selectedIndices;
 
 /** @abstract */
-@property(nonatomic,strong) NSArray *selectedValues;
+@property(nonatomic,strong) id selectedValues;
 
 /** @abstract */
 @property(nonatomic,readonly) id value;

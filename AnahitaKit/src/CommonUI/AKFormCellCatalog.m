@@ -12,6 +12,7 @@
 @interface AKSelectorFormElement()
 {
     NSMutableArray *_selectedIndices;
+    NSArray *_selectedValues;
 }
 
 @property(nonatomic,strong,readwrite) NSArray *labels;
@@ -83,8 +84,18 @@
 {
     if ( self = [super init] ) {
         _selectedIndices = [NSMutableArray array];
+        _selectedValues  = @[];
     }    
     return self;
+}
+
+- (void)setSelectedValues:(id)values
+{
+    if ( ![values isKindOfClass:[NSArray class]] ) {
+        _selectedValues = @[values];
+    } else {
+        _selectedValues = values;
+    }
 }
 
 - (BOOL)isValueAtIndexSelected:(NSUInteger)index
@@ -170,7 +181,7 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(AKSelectorFormElement*)object change:(NSDictionary *)change context:(void *)context
 {
-    self.detailTextLabel.text = @" ";
+    [self initDefaultValues];
 }
 
 - (void)prepareForReuse
@@ -195,11 +206,26 @@
         if ( self.element.dataLoader && !self.element.isReady ) {
             self.detailTextLabel.text = @"Loading";
         } else {
-            self.detailTextLabel.text = @" ";
+            [self initDefaultValues];
         }
         return YES;
     }
     return NO;
+}
+
+- (void)initDefaultValues
+{
+    NSMutableArray *labels = [NSMutableArray array];
+    for (NSString *value in self.element.selectedValues)
+    {
+        if ( [self.element.values containsObject:value] ) {
+            int index = [self.element.values indexOfObject:value];
+            NSString *label = [self.element.labels objectAtIndex:index];
+            [labels addObject:label];
+            [self.element markValueAtIndex:index selected:YES];
+        }
+    }
+    self.detailTextLabel.text = labels.count > 0 ? [labels componentsJoinedByString:@", "] : @" ";
 }
 
 - (void)setNeedsLayout
