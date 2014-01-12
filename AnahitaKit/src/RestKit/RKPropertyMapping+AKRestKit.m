@@ -19,7 +19,7 @@
 
 @implementation RKAttributeMapping (CoreEntity)
 
-SYNTHESIZE_PROPERTY_COPY(RKPropertyTransformerBlock, setTransformerBlock, getTransformerBlock)
+SYNTHESIZE_PROPERTY_COPY(RKPropertyTransformerBlock, setTransformerBlock, transformerBlock)
 
 + (instancetype)attributeMappingForKey:(NSString *)key
         usingTransformerBlock:(RKPropertyTransformerBlock)block
@@ -31,7 +31,7 @@ SYNTHESIZE_PROPERTY_COPY(RKPropertyTransformerBlock, setTransformerBlock, getTra
         toKeyPath:(NSString *)destinationKeyPath usingTransformerBlock:(RKPropertyTransformerBlock)block
 {
     RKAttributeMapping *mapping = [self attributeMappingFromKeyPath:sourceKeyPath toKeyPath:destinationKeyPath];
-    mapping.transformerBlock = block;
+    mapping.transformerBlock = block;    
     return mapping;
 }
 
