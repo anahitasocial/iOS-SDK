@@ -284,7 +284,8 @@
     CGRectDivide(_selectorContainer.bounds, &slice, &remainder, 44, CGRectMinYEdge);
     
     _toolbar.frame = slice;
-    self.selectorTableView.frame = remainder;
+
+    self.selectorTableView.frame =     NIRectContract(remainder, 0, 44);
     
     [_selectorContainer addSubview:_toolbar];
     [_selectorContainer addSubview:_selectorTableView];
@@ -395,6 +396,7 @@
         self.detailTextLabel.text = [labels componentsJoinedByString:@", "];
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
+    [self setNeedsLayout];
     if ( !self.element.isMultiSelect ) {
         [self dismissSelectorView];
     }
